@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc; /* Soft light gray-blue for light mode */
+  --foreground: #1e293b; /* Dark slate for text */
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a; /* Rich dark navy for dark mode */
+    --foreground: #f1f5f9; /* Soft white for text */
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode base styles */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0f172a; /* Rich dark navy */
+  color: #f1f5f9; /* Soft white text */
+}
+
+/* Background colors */
+.dark .min-h-screen {
+  background-color: #0f172a; /* Rich dark navy */
+}
+
+.dark .bg-white {
+  background-color: #1e293b; /* Slate 800 */
+}
+
+.dark .bg-gray-50 {
+  background-color: #0f172a; /* Rich dark navy */
+}
+
+.dark .bg-gray-100 {
+  background-color: #1e293b; /* Slate 800 */
+}
+
+.dark .bg-gray-200 {
+  background-color: #334155; /* Slate 700 */
+}
+
+.dark .bg-gray-800 {
+  background-color: #1e293b; /* Slate 800 */
+}
+
+.dark .bg-gray-900 {
+  background-color: #0f172a; /* Rich dark navy */
+}
+
+/* Text colors */
+.dark .text-gray-800,
+.dark .text-dark-blue {
+  color: #e2e8f0; /* Slate 200 */
+}
+
+.dark .text-gray-700 {
+  color: #cbd5e1; /* Slate 300 */
+}
+
+.dark .text-gray-600 {
+  color: #94a3b8; /* Slate 400 */
+}
+
+.dark .text-gray-900 {
+  color: #f1f5f9; /* Slate 100 */
+}
+
+.dark .text-black {
+  color: #f8fafc; /* Slate 50 */
+}
+
+/* Border colors */
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-dark-blue {
+  border-color: #475569; /* Slate 600 */
+}
+
+.dark .border-gray-600 {
+  border-color: #64748b; /* Slate 500 */
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-100:hover {
+  background-color: #334155; /* Slate 700 */
+}
+
+.dark .hover\:bg-gray-300:hover {
+  background-color: #475569; /* Slate 600 */
+}
+
+.dark .hover\:bg-gray-600:hover {
+  background-color: #475569; /* Slate 600 */
+}
+
+.dark .hover\:bg-gray-700:hover {
+  background-color: #334155; /* Slate 700 */
+}
+
+/* Sidebar specific */
+.dark .sidebar-dark-bg {
+  background-color: #020617; /* Slate 950 */
+}
+
+.dark .sidebar-hover-dark {
+  background-color: #1e293b; /* Slate 800 */
+}
+
+/* Button colors */
+.dark .bg-yellow-500 {
+  background-color: #eab308; /* Bright yellow for visibility */
+}
+
+.dark .text-yellow-400 {
+  color: #facc15; /* Bright yellow */
+}
+
+/* Shadow */
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8), 0 4px 6px -2px rgba(0, 0, 0, 0.6);
+}
+
+.dark .shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+}
+
+/* Transitions */
+* {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
