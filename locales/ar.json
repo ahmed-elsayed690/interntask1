@@ -13,6 +13,11 @@
   },
   "modules": {
     "title": "الوحدات",
+    "module": "الوحدة",
+    "reading": "قراءة",
+    "video": "فيديو",
+    "selfAssessment": "تقييم ذاتي",
+    "activity": "نشاط",
     "description": "استكشف وحدات التعلم لدينا"
   },
   "footer": {
