@@ -1,29 +1,26 @@
 "use client";
 
 import { useState } from 'react';
-
-interface MenuItem {
-  icon: string;
-  label: string;
-  active: boolean;
-}
+import LanguageSwitcher from './LanguageSwitcher';
+import { useLanguage } from './LanguageContext'; // Change this import
 
 export default function Sidebar() {
   const [isSidebarHovered, setIsSidebarHovered] = useState<boolean>(false);
+  const { t } = useLanguage(); // Change to use our context
 
-  const menuItems: MenuItem[] = [
-    { icon: "🏠", label: "Home", active: true },
-    { icon: "📢", label: "Announcements", active: false },
-    { icon: "📝", label: "Assignments", active: false },
-    { icon: "💬", label: "Discussions", active: false },
-    { icon: "📊", label: "Grades", active: false },
-    { icon: "📄", label: "Pages", active: false },
-    { icon: "🗂️", label: "Files", active: false },
-    { icon: "📚", label: "Syllabus", active: false },
-    { icon: "✏️", label: "Quizzes", active: false },
-    { icon: "📦", label: "Modules", active: false },
-    { icon: "👥", label: "Collaborations", active: false },
-    { icon: "🖼️", label: "Lucid (Whiteboard)", active: false },
+  const menuItems = [
+    { icon: "🏠", label: t('home', 'sidebar'), active: true },
+    { icon: "📢", label: t('announcements', 'sidebar'), active: false },
+    { icon: "📝", label: t('assignments', 'sidebar'), active: false },
+    { icon: "💬", label: t('discussions', 'sidebar'), active: false },
+    { icon: "📊", label: t('grades', 'sidebar'), active: false },
+    { icon: "📄", label: t('pages', 'sidebar'), active: false },
+    { icon: "🗂️", label: t('files', 'sidebar'), active: false },
+    { icon: "📚", label: t('syllabus', 'sidebar'), active: false },
+    { icon: "✏️", label: t('quizzes', 'sidebar'), active: false },
+    { icon: "📦", label: t('modules', 'sidebar'), active: false },
+    { icon: "👥", label: t('collaborations', 'sidebar'), active: false },
+    { icon: "🖼️", label: t('lucid', 'sidebar'), active: false },
   ];
 
   return (
@@ -59,6 +56,21 @@ export default function Sidebar() {
               )}
             </div>
           ))}
+          
+          {/* Language Switcher */}
+          <div className={`flex items-center rounded-md cursor-pointer transition-colors ${
+            isSidebarHovered ? 'py-2 px-3 justify-start mt-8' : 'p-3 justify-center mt-8'
+          }`}>
+            {isSidebarHovered ? (
+              <div className="w-full">
+                <LanguageSwitcher />
+              </div>
+            ) : (
+              <div className="flex justify-center">
+                <LanguageSwitcher />
+              </div>
+            )}
+          </div>
         </nav>
       </div>
     </aside>
