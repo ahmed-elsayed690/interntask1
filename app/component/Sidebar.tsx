@@ -18,24 +18,30 @@ import {
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from './LanguageContext';
 
-export default function Sidebar() {
+// ADD THIS: Interface for props
+interface SidebarProps {
+  activePage: string;
+  onPageChange: (pageId: string) => void;
+}
+
+export default function Sidebar({ activePage, onPageChange }: SidebarProps) { // ADD PROPS HERE
   const [isSidebarHovered, setIsSidebarHovered] = useState<boolean>(false);
   const { t, language } = useLanguage();
   const isRTL = language === 'ar';
 
   const menuItems = [
-    { icon: Home, label: t('home', 'sidebar'), active: true },
-    { icon: Megaphone, label: t('announcements', 'sidebar'), active: false },
-    { icon: FileText, label: t('assignments', 'sidebar'), active: false },
-    { icon: MessageSquare, label: t('discussions', 'sidebar'), active: false },
-    { icon: BarChart3, label: t('grades', 'sidebar'), active: false },
-    { icon: FileStack, label: t('pages', 'sidebar'), active: false },
-    { icon: FolderOpen, label: t('files', 'sidebar'), active: false },
-    { icon: BookOpen, label: t('syllabus', 'sidebar'), active: false },
-    { icon: ClipboardList, label: t('quizzes', 'sidebar'), active: false },
-    { icon: Package, label: t('modules', 'sidebar'), active: false },
-    { icon: Users, label: t('collaborations', 'sidebar'), active: false },
-    { icon: Presentation, label: t('lucid', 'sidebar'), active: false },
+    { icon: Home, label: t('home', 'sidebar'), id: 'home' },
+    { icon: Megaphone, label: t('announcements', 'sidebar'), id: 'announcements' },
+    { icon: FileText, label: t('assignments', 'sidebar'), id: 'assignments' },
+    { icon: MessageSquare, label: t('discussions', 'sidebar'), id: 'discussions' },
+    { icon: BarChart3, label: t('grades', 'sidebar'), id: 'grades' },
+    { icon: FileStack, label: t('pages', 'sidebar'), id: 'pages' },
+    { icon: FolderOpen, label: t('files', 'sidebar'), id: 'files' },
+    { icon: BookOpen, label: t('syllabus', 'sidebar'), id: 'syllabus' },
+    { icon: ClipboardList, label: t('quizzes', 'sidebar'), id: 'quizzes' }, // Changed to 'quizzes'
+    { icon: Package, label: t('modules', 'sidebar'), id: 'modules' },
+    { icon: Users, label: t('collaborations', 'sidebar'), id: 'collaborations' },
+    { icon: Presentation, label: t('lucid', 'sidebar'), id: 'lucid' },
   ];
 
   return (
@@ -54,11 +60,14 @@ export default function Sidebar() {
         <nav className="flex-1 space-y-2">
           {menuItems.map((item, index) => {
             const IconComponent = item.icon;
+            const isActive = activePage === item.id; // ADD THIS: Check if active
+            
             return (
               <div 
                 key={index} 
+                onClick={() => onPageChange(item.id)} // ADD THIS: Click handler
                 className={`flex items-center rounded-md cursor-pointer transition-colors ${
-                  item.active
+                  isActive
                     ? "bg-[#1a1f3f] text-yellow-400" 
                     : "hover:bg-[#1a1f3f] hover:text-yellow-400"
                 } ${isSidebarHovered ? 'py-2 px-3 justify-start' : 'p-3 justify-center'}`}
