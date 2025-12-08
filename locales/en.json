@@ -13,6 +13,11 @@
   },
   "modules": {
     "title": "Modules",
+    "module": "Module",
+    "reading": "Reading",
+    "video": "Video",
+    "selfAssessment": "Self-Assessment",
+    "activity": "Activity",
     "description": "Explore our learning modules"
   },
   "footer": {
