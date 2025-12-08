@@ -1,0 +1,26 @@
+{
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "courses": "الدورات",
+    "calendar": "التقويم",
+    "resources": "الموارد",
+    "settings": "الإعدادات",
+    "language": "اللغة"
+  },
+  "header": {
+    "title": "مركز ابتكار برشلونة",
+    "subtitle": "بوحة الجامعات"
+  },
+  "modules": {
+    "title": "الوحدات",
+    "description": "استكشف وحدات التعلم لدينا"
+  },
+  "footer": {
+    "copyright": "© 2024 مركز ابتكار برشلونة. جميع الحقوق محفوظة."
+  },
+  "language": {
+    "english": "English",
+    "arabic": "العربية",
+    "switch": "تبديل اللغة"
+  }
+}

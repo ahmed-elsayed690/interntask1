@@ -1,0 +1,26 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "calendar": "Calendar",
+    "resources": "Resources",
+    "settings": "Settings",
+    "language": "Language"
+  },
+  "header": {
+    "title": "BARÇA INNOVATION HUB",
+    "subtitle": "Universities Portal"
+  },
+  "modules": {
+    "title": "Modules",
+    "description": "Explore our learning modules"
+  },
+  "footer": {
+    "copyright": "© 2024 BARÇA INNOVATION HUB. All rights reserved."
+  },
+  "language": {
+    "english": "English",
+    "arabic": "العربية",
+    "switch": "Switch Language"
+  }
+}
