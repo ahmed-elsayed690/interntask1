@@ -386,15 +386,317 @@ function ReadingModal({
   );
 }
 
+// NEW: Video Modal Component
+function VideoModal({ 
+  moduleNumber, 
+  onClose 
+}: { 
+  moduleNumber: string; 
+  onClose: () => void;
+}) {
+  const { language } = useLanguage();
+  const [currentView, setCurrentView] = useState<'list' | 'video'>('list');
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  // Video data for each module with random YouTube IDs
+  const moduleVideos = {
+    "01": {
+      en: {
+        title: "Module 1 Videos",
+        videos: [
+          { 
+            id: "intro", 
+            title: "Introduction to Diversity Management",
+            youtubeId: "dQw4w9WgXcQ",
+            description: "An overview of diversity management concepts in sports organizations." 
+          },
+          { 
+            id: "gen-diversity", 
+            title: "Generational Diversity in Sports",
+            youtubeId: "9bZkp7q19f0",
+            description: "Understanding different generations in athletic environments." 
+          },
+          { 
+            id: "case-study", 
+            title: "Case Study: FC Barcelona",
+            youtubeId: "L_jWHffIx5E",
+            description: "How FC Barcelona manages diverse teams for high performance." 
+          }
+        ]
+      },
+      ar: {
+        title: "مقاطع فيديو الوحدة 1",
+        videos: [
+          { 
+            id: "intro", 
+            title: "مقدمة في إدارة التنوع",
+            youtubeId: "dQw4w9WgXcQ",
+            description: "نظرة عامة على مفاهيم إدارة التنوع في المنظمات الرياضية." 
+          },
+          { 
+            id: "gen-diversity", 
+            title: "التنوع الجيلي في الرياضة",
+            youtubeId: "9bZkp7q19f0",
+            description: "فهم الأجيال المختلفة في البيئات الرياضية." 
+          }
+        ]
+      }
+    },
+    "02": {
+      en: {
+        title: "Module 2 Videos",
+        videos: [
+          { 
+            id: "leadership-intro", 
+            title: "Leadership in Modern Sports",
+            youtubeId: "oC_Gj4DEnrE",
+            description: "Exploring contemporary leadership approaches." 
+          },
+          { 
+            id: "team-dynamics", 
+            title: "Team Dynamics Workshop",
+            youtubeId: "Fdf5aTYRW0E",
+            description: "Practical exercises for building team cohesion." 
+          },
+          { 
+            id: "motivation", 
+            title: "Motivational Techniques",
+            youtubeId: "sGbxmsDFVnE",
+            description: "Strategies for motivating diverse athlete groups." 
+          }
+        ]
+      },
+      ar: {
+        title: "مقاطع فيديو الوحدة 2",
+        videos: [
+          { 
+            id: "leadership-intro", 
+            title: "القيادة في الرياضة الحديثة",
+            youtubeId: "oC_Gj4DEnrE",
+            description: "استكشاف نهج القيادة المعاصرة." 
+          },
+          { 
+            id: "team-dynamics", 
+            title: "ورشة عمل ديناميكيات الفريق",
+            youtubeId: "Fdf5aTYRW0E",
+            description: "تمارين عملية لبناء التماسك الجماعي." 
+          }
+        ]
+      }
+    },
+    "03": {
+      en: {
+        title: "Module 3 Videos",
+        videos: [
+          { 
+            id: "analytics-intro", 
+            title: "Introduction to Sports Analytics",
+            youtubeId: "BBJa32lCaaY",
+            description: "The role of data in modern sports management." 
+          },
+          { 
+            id: "video-analysis", 
+            title: "Video Analysis Techniques",
+            youtubeId: "T7eWQ0qeDDU",
+            description: "How to effectively analyze game footage." 
+          },
+          { 
+            id: "wearable-tech", 
+            title: "Wearable Technology Demo",
+            youtubeId: "M4cg3Hx5Lz4",
+            description: "Demonstration of biometric tracking devices." 
+          }
+        ]
+      },
+      ar: {
+        title: "مقاطع فيديو الوحدة 3",
+        videos: [
+          { 
+            id: "analytics-intro", 
+            title: "مقدمة في التحليلات الرياضية",
+            youtubeId: "BBJa32lCaaY",
+            description: "دور البيانات في الإدارة الرياضية الحديثة." 
+          },
+          { 
+            id: "video-analysis", 
+            title: "تقنيات تحليل الفيديو",
+            youtubeId: "T7eWQ0qeDDU",
+            description: "كيفية تحليل لقطات المباراة بفعالية." 
+          }
+        ]
+      }
+    },
+    "04": {
+      en: {
+        title: "Module 4 Videos",
+        videos: [
+          { 
+            id: "psychology-intro", 
+            title: "Sports Psychology Basics",
+            youtubeId: "yPYZpwSpKmA",
+            description: "Fundamental psychological principles for athletes." 
+          },
+          { 
+            id: "mental-toughness", 
+            title: "Building Mental Toughness",
+            youtubeId: "n9h0XzK-0nY",
+            description: "Exercises to develop psychological resilience." 
+          },
+          { 
+            id: "visualization", 
+            title: "Visualization Techniques",
+            youtubeId: "Oo8wS6I6r5g",
+            description: "How to use mental imagery for performance enhancement." 
+          }
+        ]
+      },
+      ar: {
+        title: "مقاطع فيديو الوحدة 4",
+        videos: [
+          { 
+            id: "psychology-intro", 
+            title: "أساسيات علم النفس الرياضي",
+            youtubeId: "yPYZpwSpKmA",
+            description: "المبادئ النفسية الأساسية للرياضيين." 
+          },
+          { 
+            id: "mental-toughness", 
+            title: "بناء الصلابة النفسية",
+            youtubeId: "n9h0XzK-0nY",
+            description: "تمارين لتطوير المرونة النفسية." 
+          }
+        ]
+      }
+    }
+  };
+
+  const content = moduleVideos[moduleNumber as keyof typeof moduleVideos]?.[language];
+  const currentVideo = content?.videos.find(v => v.id === selectedVideo);
+
+  if (!content) return null;
+
+  // Video List View
+  if (currentView === 'list') {
+    return (
+      <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 text-gray-900 hover:text-gray-600 z-10"
+        >
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="max-w-6xl mx-auto px-6 py-12">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-900">BARÇA INNOVATION HUB</h2>
+            <p className="text-sm text-gray-600">Universitas</p>
+            <h1 className="text-3xl font-bold mt-4 text-[#0f1431]">{content.title}</h1>
+            <p className="text-gray-600 mt-2">Select a video to watch</p>
+          </div>
+
+          {/* Video Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {content.videos.map((video) => (
+              <div
+                key={video.id}
+                onClick={() => {
+                  setSelectedVideo(video.id);
+                  setCurrentView('video');
+                }}
+                className="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
+              >
+                {/* Video Thumbnail */}
+                <div className="relative h-48 bg-gray-900">
+                  <img 
+                    src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center">
+                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Video Info */}
+                <div className="p-4">
+                  <h3 className="font-bold text-gray-900 mb-2">{video.title}</h3>
+                  <p className="text-sm text-gray-600">{video.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Single Video View
+  return (
+    <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center p-4">
+      <button
+        onClick={onClose}
+        className="absolute top-6 right-6 text-white hover:text-gray-300 z-10"
+      >
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <button
+        onClick={() => setCurrentView('list')}
+        className="absolute top-6 left-6 text-white hover:text-gray-300 z-10 flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        <span>Back to Videos</span>
+      </button>
+
+      {/* Video Player */}
+      <div className="w-full max-w-4xl">
+        <div className="relative pt-[56.25%] h-0 mb-6">
+          <iframe
+            className="absolute top-0 left-0 w-full h-full rounded-lg"
+            src={`https://www.youtube.com/embed/${currentVideo?.youtubeId}?autoplay=1`}
+            title={currentVideo?.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+
+        {/* Video Info */}
+        <div className="bg-white rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{currentVideo?.title}</h2>
+          <p className="text-gray-600 mb-4">{currentVideo?.description}</p>
+          <div className="text-sm text-gray-500">
+            Module {moduleNumber} • Video • {content.videos.length} videos available
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ModuleCard({ number, items }: ModuleCardProps) {
   const { language, t } = useLanguage();
   const isRTL = language === 'ar';
   const [showReading, setShowReading] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   const handleItemClick = (item: string) => {
     const readingText = t('reading', 'modules');
+    const videoText = t('video', 'modules');
+    
     if (item === readingText) {
       setShowReading(true);
+    } else if (item === videoText) {
+      setShowVideo(true);
     }
   };
 
@@ -413,7 +715,8 @@ export default function ModuleCard({ number, items }: ModuleCardProps) {
           <ul className="space-y-3">
             {items.map((item, index) => {
               const readingText = t('reading', 'modules');
-              const isClickable = item === readingText;
+              const videoText = t('video', 'modules');
+              const isClickable = item === readingText || item === videoText;
               
               return (
                 <li 
@@ -436,6 +739,13 @@ export default function ModuleCard({ number, items }: ModuleCardProps) {
         <ReadingModal 
           moduleNumber={number} 
           onClose={() => setShowReading(false)} 
+        />
+      )}
+
+      {showVideo && (
+        <VideoModal 
+          moduleNumber={number} 
+          onClose={() => setShowVideo(false)} 
         />
       )}
     </>
