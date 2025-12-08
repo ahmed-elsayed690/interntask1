@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from 'react';
-import { useLanguage } from './LanguageContext';
+import { useState, createContext, useContext } from 'react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+
+// Create a simple language context
+const LanguageContext = createContext<{ language: 'en' | 'ar' }>({ language: 'en' });
+const useLanguage = () => useContext(LanguageContext);
 
 interface ModuleCardProps {
   number: string;
@@ -20,6 +24,7 @@ function ReadingModal({
   const { language } = useLanguage();
   const [currentView, setCurrentView] = useState<'landing' | 'list' | 'content'>('landing');
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
+  const [currentSection, setCurrentSection] = useState<'reading' | 'video' | 'self-assessment'>('reading');
 
   // Module content data
   const moduleContent = {
@@ -211,19 +216,34 @@ function ReadingModal({
   const content = moduleContent[moduleNumber as keyof typeof moduleContent]?.[language];
   const currentLesson = content?.lessons.find(l => l.id === selectedLesson);
 
+  // Navigation functions
+  const handleNext = () => {
+    if (currentSection === 'reading') {
+      setCurrentSection('video');
+    } else if (currentSection === 'video') {
+      setCurrentSection('self-assessment');
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentSection === 'video') {
+      setCurrentSection('reading');
+    } else if (currentSection === 'self-assessment') {
+      setCurrentSection('video');
+    }
+  };
+
   if (!content) return null;
 
   // Landing view
   if (currentView === 'landing') {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-90 z-[100] flex items-center justify-center p-4">
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-white hover:text-gray-300 z-10"
         >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <X className="w-8 h-8" />
         </button>
         
         <div className="text-center text-white max-w-4xl">
@@ -250,14 +270,12 @@ function ReadingModal({
   // List view
   if (currentView === 'list') {
     return (
-      <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+      <div className="fixed inset-0 bg-white z-[100] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-gray-900 hover:text-gray-600"
         >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <X className="w-8 h-8" />
         </button>
 
         <div className="max-w-4xl mx-auto px-6 py-12">
@@ -287,12 +305,12 @@ function ReadingModal({
     );
   }
 
-  // Content view with sidebar
+  // Content view with sidebar and navigation
   const currentLessonIndex = content.lessons.findIndex(l => l.id === selectedLesson);
   const totalLessons = content.lessons.length;
 
   return (
-    <div className="fixed inset-0 bg-white z-50 flex">
+    <div className="fixed inset-0 bg-white z-[100] flex">
       {/* Sidebar */}
       <div className="w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto relative">
         {/* Module Header with Background Image */}
@@ -338,55 +356,96 @@ function ReadingModal({
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto relative">
+      <div className="flex-1 overflow-y-auto relative flex flex-col">
         {/* Top Navigation Bar */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <button
             onClick={() => setCurrentView('list')}
             className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <ChevronLeft className="w-5 h-5" />
             <span className="text-sm">Back to lessons</span>
           </button>
+
+          {/* Section Navigation */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handlePrevious}
+              disabled={currentSection === 'reading'}
+              className="text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <ChevronLeft className="w-5 h-5" />
+              <span className="text-sm">Previous</span>
+            </button>
+            
+            <div className="text-sm text-gray-600 px-4 py-1 bg-gray-100 rounded">
+              {currentSection === 'reading' && 'Reading'}
+              {currentSection === 'video' && 'Video'}
+              {currentSection === 'self-assessment' && 'Self-Assessment'}
+            </div>
+
+            <button
+              onClick={handleNext}
+              disabled={currentSection === 'self-assessment'}
+              className="text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <span className="text-sm">Next</span>
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
 
           <button
             onClick={onClose}
             className="text-gray-600 hover:text-gray-900"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-8 py-12">
-          {/* Lesson Counter */}
-          <div className="text-sm text-gray-500 mb-2">
-            Lesson {currentLessonIndex + 1} of {totalLessons}
-          </div>
+        <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
+          {currentSection === 'reading' && (
+            <>
+              {/* Lesson Counter */}
+              <div className="text-sm text-gray-500 mb-2">
+                Lesson {currentLessonIndex + 1} of {totalLessons}
+              </div>
 
-          {/* Lesson Title */}
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {currentLesson?.title}
-          </h1>
+              {/* Lesson Title */}
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                {currentLesson?.title}
+              </h1>
 
-          {/* Blue Progress Line */}
-          <div className="w-20 h-1 bg-blue-500 mb-8"></div>
+              {/* Blue Progress Line */}
+              <div className="w-20 h-1 bg-blue-500 mb-8"></div>
 
-          {/* Lesson Content */}
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-            <p>{currentLesson?.content}</p>
-          </div>
+              {/* Lesson Content */}
+              <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                <p>{currentLesson?.content}</p>
+              </div>
+            </>
+          )}
+
+          {currentSection === 'video' && (
+            <div className="text-center text-gray-600">
+              <h2 className="text-2xl font-bold mb-4">Video Section</h2>
+              <p>Video content will be displayed here</p>
+            </div>
+          )}
+
+          {currentSection === 'self-assessment' && (
+            <div className="text-center text-gray-600">
+              <h2 className="text-2xl font-bold mb-4">Self-Assessment</h2>
+              <p>Self-assessment content will be displayed here</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-// NEW: Video Modal Component
+// Video Modal Component with toggle for 3 videos
 function VideoModal({ 
   moduleNumber, 
   onClose 
@@ -395,10 +454,10 @@ function VideoModal({
   onClose: () => void;
 }) {
   const { language } = useLanguage();
-  const [currentView, setCurrentView] = useState<'list' | 'video'>('list');
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState<number>(0);
+  const [currentSection, setCurrentSection] = useState<'video' | 'reading' | 'self-assessment'>('video');
 
-  // Video data for each module with random YouTube IDs
+  // Video data for each module
   const moduleVideos = {
     "01": {
       en: {
@@ -438,6 +497,12 @@ function VideoModal({
             title: "التنوع الجيلي في الرياضة",
             youtubeId: "9bZkp7q19f0",
             description: "فهم الأجيال المختلفة في البيئات الرياضية." 
+          },
+          { 
+            id: "case-study", 
+            title: "دراسة حالة: نادي برشلونة",
+            youtubeId: "L_jWHffIx5E",
+            description: "كيف يدير برشلونة الفرق المتنوعة لتحقيق الأداء العالي." 
           }
         ]
       }
@@ -480,6 +545,12 @@ function VideoModal({
             title: "ورشة عمل ديناميكيات الفريق",
             youtubeId: "Fdf5aTYRW0E",
             description: "تمارين عملية لبناء التماسك الجماعي." 
+          },
+          { 
+            id: "motivation", 
+            title: "تقنيات التحفيز",
+            youtubeId: "sGbxmsDFVnE",
+            description: "استراتيجيات لتحفيز مجموعات الرياضيين المتنوعة." 
           }
         ]
       }
@@ -522,6 +593,12 @@ function VideoModal({
             title: "تقنيات تحليل الفيديو",
             youtubeId: "T7eWQ0qeDDU",
             description: "كيفية تحليل لقطات المباراة بفعالية." 
+          },
+          { 
+            id: "wearable-tech", 
+            title: "عرض تجريبي للتكنولوجيا القابلة للارتداء",
+            youtubeId: "M4cg3Hx5Lz4",
+            description: "عرض توضيحي لأجهزة التتبع البيومترية." 
           }
         ]
       }
@@ -564,6 +641,12 @@ function VideoModal({
             title: "بناء الصلابة النفسية",
             youtubeId: "n9h0XzK-0nY",
             description: "تمارين لتطوير المرونة النفسية." 
+          },
+          { 
+            id: "visualization", 
+            title: "تقنيات التصور",
+            youtubeId: "Oo8wS6I6r5g",
+            description: "كيفية استخدام الصور الذهنية لتحسين الأداء." 
           }
         ]
       }
@@ -571,183 +654,219 @@ function VideoModal({
   };
 
   const content = moduleVideos[moduleNumber as keyof typeof moduleVideos]?.[language];
-  const currentVideo = content?.videos.find(v => v.id === selectedVideo);
+  const currentVideo = content?.videos[currentVideoIndex];
+
+  // Navigation functions
+  const handleNext = () => {
+    if (currentSection === 'reading') {
+      setCurrentSection('video');
+    } else if (currentSection === 'video') {
+      setCurrentSection('self-assessment');
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentSection === 'video') {
+      setCurrentSection('reading');
+    } else if (currentSection === 'self-assessment') {
+      setCurrentSection('video');
+    }
+  };
 
   if (!content) return null;
 
-  // Video List View
-  if (currentView === 'list') {
-    return (
-      <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 text-gray-900 hover:text-gray-600 z-10"
-        >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+  return (
+    <div className="fixed inset-0 bg-white z-[100] flex">
+      {/* Sidebar with video thumbnails */}
+      <div className="w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto">
+        {/* Module Header */}
+        <div className="h-48 bg-gradient-to-br from-gray-700 to-gray-900 relative flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          <h2 className="relative text-lg font-bold text-center leading-tight z-10">
+            {content.title}
+          </h2>
+        </div>
 
-        <div className="max-w-6xl mx-auto px-6 py-12">
-          <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900">BARÇA INNOVATION HUB</h2>
-            <p className="text-sm text-gray-600">Universitas</p>
-            <h1 className="text-3xl font-bold mt-4 text-[#0f1431]">{content.title}</h1>
-            <p className="text-gray-600 mt-2">Select a video to watch</p>
-          </div>
-
-          {/* Video Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {content.videos.map((video) => (
+        {/* Video List */}
+        <div className="p-4">
+          <h3 className="text-sm text-gray-400 mb-3 uppercase">Videos</h3>
+          <div className="space-y-3">
+            {content.videos.map((video, index) => (
               <div
                 key={video.id}
-                onClick={() => {
-                  setSelectedVideo(video.id);
-                  setCurrentView('video');
-                }}
-                className="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
+                onClick={() => setCurrentVideoIndex(index)}
+                className={`cursor-pointer rounded-lg overflow-hidden transition-all ${
+                  currentVideoIndex === index
+                    ? 'ring-2 ring-blue-500'
+                    : 'hover:opacity-80'
+                }`}
               >
-                {/* Video Thumbnail */}
-                <div className="relative h-48 bg-gray-900">
+                <div className="relative h-32 bg-gray-800">
                   <img 
-                    src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                    src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
                     alt={video.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
                   </div>
                 </div>
-                
-                {/* Video Info */}
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-2">{video.title}</h3>
-                  <p className="text-sm text-gray-600">{video.description}</p>
+                <div className="p-3">
+                  <h4 className="text-sm font-semibold mb-1">{video.title}</h4>
+                  <p className="text-xs text-gray-400">{video.description}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-    );
-  }
 
-  // Single Video View
-  return (
-    <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center p-4">
-      <button
-        onClick={onClose}
-        className="absolute top-6 right-6 text-white hover:text-gray-300 z-10"
-      >
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto relative flex flex-col">
+        {/* Top Navigation Bar */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-      <button
-        onClick={() => setCurrentView('list')}
-        className="absolute top-6 left-6 text-white hover:text-gray-300 z-10 flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        <span>Back to Videos</span>
-      </button>
+          {/* Section Navigation */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handlePrevious}
+              disabled={currentSection === 'video'}
+              className="text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <ChevronLeft className="w-5 h-5" />
+              <span className="text-sm">Previous</span>
+            </button>
+            
+            <div className="text-sm text-gray-600 px-4 py-1 bg-gray-100 rounded">
+              {currentSection === 'reading' && 'Reading'}
+              {currentSection === 'video' && 'Video'}
+              {currentSection === 'self-assessment' && 'Self-Assessment'}
+            </div>
 
-      {/* Video Player */}
-      <div className="w-full max-w-4xl">
-        <div className="relative pt-[56.25%] h-0 mb-6">
-          <iframe
-            className="absolute top-0 left-0 w-full h-full rounded-lg"
-            src={`https://www.youtube.com/embed/${currentVideo?.youtubeId}?autoplay=1`}
-            title={currentVideo?.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+            <button
+              onClick={handleNext}
+              disabled={currentSection === 'self-assessment'}
+              className="text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <span className="text-sm">Next</span>
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* Video Info */}
-        <div className="bg-white rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{currentVideo?.title}</h2>
-          <p className="text-gray-600 mb-4">{currentVideo?.description}</p>
-          <div className="text-sm text-gray-500">
-            Module {moduleNumber} • Video • {content.videos.length} videos available
-          </div>
+        {/* Content */}
+        <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
+          {currentSection === 'video' && currentVideo && (
+            <>
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                {currentVideo.title}
+              </h1>
+              <div className="w-20 h-1 bg-blue-500 mb-8"></div>
+              
+              <div className="aspect-video w-full bg-black rounded-lg overflow-hidden mb-6">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${currentVideo.youtubeId}`}
+                  title={currentVideo.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              
+              <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                <p>{currentVideo.description}</p>
+              </div>
+            </>
+          )}
+
+          {currentSection === 'reading' && (
+            <div className="text-center text-gray-600">
+              <h2 className="text-2xl font-bold mb-4">Reading Section</h2>
+              <p>Reading content will be displayed here</p>
+            </div>
+          )}
+
+          {currentSection === 'self-assessment' && (
+            <div className="text-center text-gray-600">
+              <h2 className="text-2xl font-bold mb-4">Self-Assessment</h2>
+              <p>Self-assessment content will be displayed here</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default function ModuleCard({ number, items }: ModuleCardProps) {
-  const { language, t } = useLanguage();
-  const isRTL = language === 'ar';
-  const [showReading, setShowReading] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
+interface ModuleCardProps {
+  number: string;
+  items: string[];
+  language?: 'en' | 'ar';
+}
 
-  const handleItemClick = (item: string) => {
-    const readingText = t('reading', 'modules');
-    const videoText = t('video', 'modules');
-    
-    if (item === readingText) {
-      setShowReading(true);
-    } else if (item === videoText) {
-      setShowVideo(true);
-    }
-  };
+export default function ModuleCard({ number, items = [], language = 'en' }: ModuleCardProps) {
+  const [showReadingModal, setShowReadingModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   return (
-    <>
-      <div className="border-[3px] border-[#0f1431] bg-white p-6 rounded-lg relative">
-        <div className={`absolute -top-0 ${isRTL ? 'right-0' : 'left-0'} bg-[#1a1d2e] text-white px-6 py-2.5 inline-block`}>
-          <span className="font-bold text-lg tracking-wide">
-            {t('module', 'modules')} <span className="text-[#f4b740]">{number}</span>
-          </span>
+    <LanguageContext.Provider value={{ language }}>
+      <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-gray-900">Module {number}</h3>
         </div>
-
-        <div className="h-8"></div>
-
-        <div className={`${isRTL ? 'border-r-[3px] pr-4 mr-1' : 'border-l-[3px] pl-4 ml-1'} border-[#0f1431]`}>
-          <ul className="space-y-3">
-            {items.map((item, index) => {
-              const readingText = t('reading', 'modules');
-              const videoText = t('video', 'modules');
-              const isClickable = item === readingText || item === videoText;
-              
-              return (
-                <li 
-                  key={index} 
-                  className={`text-gray-800 flex items-start ${isClickable ? 'cursor-pointer hover:text-[#f4b740] transition-colors' : ''}`}
-                  onClick={() => isClickable && handleItemClick(item)}
-                >
-                  <span className={`text-[#0f1431] font-bold ${isRTL ? 'ml-2' : 'mr-2'} text-lg`}>
-                    {isRTL ? '<' : '>'}
-                  </span>
-                  <span className={`${isClickable ? 'hover:underline' : ''}`}>{item}</span>
-                </li>
-              );
-            })}
+        
+        {items && items.length > 0 && (
+          <ul className="space-y-2 mb-4">
+            {items.map((item, index) => (
+              <li key={index} className="text-gray-600 text-sm flex items-start">
+                <span className="mr-2">•</span>
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
+        )}
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowReadingModal(true)}
+            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
+          >
+            Read
+          </button>
+          <button
+            onClick={() => setShowVideoModal(true)}
+            className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors text-sm font-semibold"
+          >
+            Watch
+          </button>
         </div>
+
+        {showReadingModal && (
+          <ReadingModal 
+            moduleNumber={number} 
+            onClose={() => setShowReadingModal(false)} 
+          />
+        )}
+
+        {showVideoModal && (
+          <VideoModal 
+            moduleNumber={number} 
+            onClose={() => setShowVideoModal(false)} 
+          />
+        )}
       </div>
-
-      {showReading && (
-        <ReadingModal 
-          moduleNumber={number} 
-          onClose={() => setShowReading(false)} 
-        />
-      )}
-
-      {showVideo && (
-        <VideoModal 
-          moduleNumber={number} 
-          onClose={() => setShowVideo(false)} 
-        />
-      )}
-    </>
+    </LanguageContext.Provider>
   );
 }
