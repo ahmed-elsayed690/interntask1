@@ -13,8 +13,12 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="fixed bottom-4 end-4 sm:bottom-8 sm:end-8 p-3 sm:p-4 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 z-40 opacity-50">
-        <div className="w-5 h-5 sm:w-6 sm:h-6"></div>
+      <div className="flex items-center justify-center w-full">
+        <div className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md 
+                     bg-gray-100 dark:bg-gray-800 w-32">
+          <div className="w-5 h-5 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+          <div className="flex-1 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
+        </div>
       </div>
     );
   }
@@ -29,14 +33,17 @@ function ThemeToggleButton() {
   return (
     <button
       onClick={toggleTheme}
-      className="fixed bottom-4 end-4 sm:bottom-8 sm:end-8 p-3 sm:p-4 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all shadow-lg hover:shadow-xl z-40 min-w-[44px] min-h-[44px] flex items-center justify-center"
+      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md 
+               bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 
+               transition-colors duration-200 w-full justify-center"
       aria-label="Toggle theme"
       title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
       dir={language === 'ar' ? 'rtl' : 'ltr'}
     >
-      <span className="text-xl sm:text-2xl">
+      <span className="text-lg">
         {theme === 'light' ? '🌙' : '☀️'}
       </span>
+      <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
     </button>
   );
 }
