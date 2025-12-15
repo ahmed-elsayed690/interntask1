@@ -866,43 +866,166 @@ function VideoModal({
   );
 }
 
+// Self-Assessment Modal Component
+function SelfAssessmentModal({ 
+  moduleNumber, 
+  onClose 
+}: { 
+  moduleNumber: string; 
+  onClose: () => void;
+}) {
+  const { language } = useLanguage();
+  const [currentSection, setCurrentSection] = useState<'video' | 'reading' | 'self-assessment'>('self-assessment');
+
+  // Navigation functions
+  const handleNext = () => {
+    if (currentSection === 'reading') {
+      setCurrentSection('video');
+    } else if (currentSection === 'video') {
+      setCurrentSection('self-assessment');
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentSection === 'video') {
+      setCurrentSection('reading');
+    } else if (currentSection === 'self-assessment') {
+      setCurrentSection('video');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-white z-[100] flex flex-col lg:flex-row">
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto relative flex flex-col">
+        {/* Top Navigation Bar */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Section Navigation */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handlePrevious}
+              disabled={currentSection === 'reading'}
+              className="text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <ChevronLeft className="w-5 h-5" />
+              <span className="text-sm">Previous</span>
+            </button>
+            
+            <div className="text-sm text-gray-600 px-4 py-1 bg-gray-100 rounded">
+              {currentSection === 'reading' && 'Reading'}
+              {currentSection === 'video' && 'Video'}
+              {currentSection === 'self-assessment' && 'Self-Assessment'}
+            </div>
+
+            <button
+              onClick={handleNext}
+              disabled={currentSection === 'self-assessment'}
+              className="text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <span className="text-sm">Next</span>
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
+          <div className="text-center text-gray-600">
+            <h2 className="text-4xl font-bold mb-4">Self-Assessment</h2>
+            <p>Self-assessment content will be displayed here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Activity Modal Component
+function ActivityModal({ 
+  moduleNumber, 
+  onClose 
+}: { 
+  moduleNumber: string; 
+  onClose: () => void;
+}) {
+  const { language } = useLanguage();
+
+  return (
+    <div className="fixed inset-0 bg-white z-[100] flex flex-col">
+      {/* Top Navigation Bar */}
+      <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+        <button
+          onClick={onClose}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          <X className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
+        <div className="text-center text-gray-600">
+          <h2 className="text-4xl font-bold mb-4">Activity</h2>
+          <p>Activity content for Module {moduleNumber} will be displayed here</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main ModuleCard Component
 function ModuleCard({ number, items = [], language = 'en' }: ModuleCardProps) {
   const [showReadingModal, setShowReadingModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showSelfAssessmentModal, setShowSelfAssessmentModal] = useState(false);
+  const [showActivityModal, setShowActivityModal] = useState(false);
+
+  // Function to determine which modal to open based on item type
+  const handleItemClick = (item: string) => {
+    const normalizedItem = item.toLowerCase();
+    
+    if (normalizedItem.includes('read') || normalizedItem === 'reading') {
+      setShowReadingModal(true);
+    } else if (normalizedItem.includes('watch') || normalizedItem === 'video') {
+      setShowVideoModal(true);
+    } else if (normalizedItem.includes('self') || normalizedItem.includes('assessment')) {
+      setShowSelfAssessmentModal(true);
+    } else if (normalizedItem.includes('activity')) {
+      setShowActivityModal(true);
+    }
+  };
 
   return (
     <LanguageContext.Provider value={{ language }}>
-      <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow h-full border border-gray-200">
+        <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-gray-900">Module {number}</h3>
         </div>
         
         {items && items.length > 0 && (
-          <ul className="space-y-2 mb-4">
+          <ul className="space-y-3">
             {items.map((item, index) => (
-              <li key={index} className="text-gray-600 text-sm flex items-start">
-                <span className="mr-2">•</span>
-                <span>{item}</span>
+              <li 
+                key={index} 
+                onClick={() => handleItemClick(item)}
+                className="text-gray-600 text-sm flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors group"
+              >
+                <div className="flex items-center">
+                  <span className="mr-2">•</span>
+                  <span>{item}</span>
+                </div>
+                <span className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
               </li>
             ))}
           </ul>
         )}
-
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowReadingModal(true)}
-            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-          >
-            Read
-          </button>
-          <button
-            onClick={() => setShowVideoModal(true)}
-            className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors text-sm font-semibold"
-          >
-            Watch
-          </button>
-        </div>
 
         {showReadingModal && (
           <ReadingModal 
@@ -915,6 +1038,20 @@ function ModuleCard({ number, items = [], language = 'en' }: ModuleCardProps) {
           <VideoModal 
             moduleNumber={number} 
             onClose={() => setShowVideoModal(false)} 
+          />
+        )}
+
+        {showSelfAssessmentModal && (
+          <SelfAssessmentModal 
+            moduleNumber={number} 
+            onClose={() => setShowSelfAssessmentModal(false)} 
+          />
+        )}
+
+        {showActivityModal && (
+          <ActivityModal 
+            moduleNumber={number} 
+            onClose={() => setShowActivityModal(false)} 
           />
         )}
       </div>
