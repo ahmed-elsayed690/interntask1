@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Home, 
   Megaphone, 
@@ -13,21 +13,35 @@ import {
   ClipboardList, 
   Package, 
   Users, 
-  Presentation 
+  Presentation,
+  Menu,
+  X
 } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from './LanguageContext';
 
-// ADD THIS: Interface for props
 interface SidebarProps {
   activePage: string;
   onPageChange: (pageId: string) => void;
 }
 
-export default function Sidebar({ activePage, onPageChange }: SidebarProps) { // ADD PROPS HERE
+export default function Sidebar({ activePage, onPageChange }: SidebarProps) {
   const [isSidebarHovered, setIsSidebarHovered] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   const { t, language } = useLanguage();
   const isRTL = language === 'ar';
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const menuItems = [
     { icon: Home, label: t('home', 'sidebar'), id: 'home' },
@@ -38,64 +52,93 @@ export default function Sidebar({ activePage, onPageChange }: SidebarProps) { //
     { icon: FileStack, label: t('pages', 'sidebar'), id: 'pages' },
     { icon: FolderOpen, label: t('files', 'sidebar'), id: 'files' },
     { icon: BookOpen, label: t('syllabus', 'sidebar'), id: 'syllabus' },
-    { icon: ClipboardList, label: t('quizzes', 'sidebar'), id: 'quizzes' }, // Changed to 'quizzes'
+    { icon: ClipboardList, label: t('quizzes', 'sidebar'), id: 'quizzes' },
     { icon: Package, label: t('modules', 'sidebar'), id: 'modules' },
     { icon: Users, label: t('collaborations', 'sidebar'), id: 'collaborations' },
     { icon: Presentation, label: t('lucid', 'sidebar'), id: 'lucid' },
   ];
 
   return (
-    <aside 
-      className={`${isSidebarHovered ? 'w-72' : 'w-20'} bg-[#0f1431] text-white transition-all duration-300 ease-in-out flex flex-col`}
-      onMouseEnter={() => setIsSidebarHovered(true)}
-      onMouseLeave={() => setIsSidebarHovered(false)}
-    >
-      <div className={`${isSidebarHovered ? 'p-6' : 'p-4'} flex flex-col h-full`}>
-        {/* Logo/Title */}
-        <div className={`${isSidebarHovered ? 'text-2xl' : 'text-sm'} font-bold ${isSidebarHovered ? 'mb-8' : 'mb-6 text-center'}`}>
-          {isSidebarHovered ? 'BARÇA INNOVATION HUB' : 'BARÇA'}
-        </div>
+    <>
+      {/* Mobile Hamburger Button - Only show on mobile */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed top-4 left-4 z-50 p-2 bg-[#0f1431] text-white rounded-lg lg:hidden"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
-        {/* Navigation - Takes up remaining space */}
-        <nav className="flex-1 space-y-2">
-          {menuItems.map((item, index) => {
-            const IconComponent = item.icon;
-            const isActive = activePage === item.id; // ADD THIS: Check if active
-            
-            return (
-              <div 
-                key={index} 
-                onClick={() => onPageChange(item.id)} // ADD THIS: Click handler
-                className={`flex items-center rounded-md cursor-pointer transition-colors ${
-                  isActive
-                    ? "bg-[#1a1f3f] text-yellow-400" 
-                    : "hover:bg-[#1a1f3f] hover:text-yellow-400"
-                } ${isSidebarHovered ? 'py-2 px-3 justify-start' : 'p-3 justify-center'}`}
-              >
-                <IconComponent 
-                  className={`${isSidebarHovered ? (isRTL ? 'ml-3' : 'mr-3') : ''}`}
-                  size={20}
-                  strokeWidth={2}
-                />
-                {isSidebarHovered && (
-                  <span className="truncate">
-                    {item.label}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-        
-        {/* Bottom Section - Language Switcher */}
-        <div className="mt-auto pt-6 border-t border-gray-700">
-          <div className={`flex items-center rounded-md ${
-            isSidebarHovered ? 'justify-start' : 'justify-center'
-          }`}>
-            <LanguageSwitcher />
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Desktop & Mobile Sidebar */}
+      <aside 
+        className={`fixed lg:relative top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
+          lg:translate-x-0
+          ${isSidebarHovered ? 'w-72' : 'w-20'} 
+          bg-[#0f1431] text-white flex flex-col
+          lg:block
+        `}
+        onMouseEnter={() => !isMobile && setIsSidebarHovered(true)}
+        onMouseLeave={() => !isMobile && setIsSidebarHovered(false)}
+      >
+        <div className={`${isMobileMenuOpen ? 'p-6' : isSidebarHovered ? 'p-6' : 'p-4'} flex flex-col h-full`}>
+          {/* Logo/Title */}
+          <div className={`${isSidebarHovered || isMobileMenuOpen ? 'text-2xl' : 'text-sm'} font-bold ${isSidebarHovered || isMobileMenuOpen ? 'mb-8' : 'mb-6 text-center'}`}>
+            {isSidebarHovered || isMobileMenuOpen ? 'BARÇA INNOVATION HUB' : 'BARÇA'}
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 space-y-2 overflow-y-auto">
+            {menuItems.map((item, index) => {
+              const IconComponent = item.icon;
+              const isActive = activePage === item.id;
+              
+              return (
+                <div 
+                  key={index} 
+                  onClick={() => {
+                    onPageChange(item.id);
+                    if (isMobile) setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center rounded-md cursor-pointer transition-colors ${
+                    isActive
+                      ? "bg-[#1a1f3f] text-yellow-400" 
+                      : "hover:bg-[#1a1f3f] hover:text-yellow-400"
+                  } ${isSidebarHovered || isMobileMenuOpen ? 'py-2 px-3 justify-start' : 'p-3 justify-center'}`}
+                >
+                  <IconComponent 
+                    className={`${(isSidebarHovered || isMobileMenuOpen) ? (isRTL ? 'ml-3' : 'mr-3') : ''}`}
+                    size={20}
+                    strokeWidth={2}
+                  />
+                  {(isSidebarHovered || isMobileMenuOpen) && (
+                    <span className="truncate">
+                      {item.label}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+          
+          {/* Bottom Section */}
+          <div className="mt-auto pt-6 border-t border-gray-700">
+            <div className={`flex items-center rounded-md ${
+              (isSidebarHovered || isMobileMenuOpen) ? 'justify-start' : 'justify-center'
+            }`}>
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
