@@ -36,7 +36,8 @@ export default function Page() {
         onPageChange={setActivePage} 
       />
 
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-white w-full">
+      {/* Main content with mobile top bar spacing */}
+      <main className="flex-1 p-4 sm:p-5 md:p-6 lg:p-8 bg-white w-full overflow-x-hidden min-h-screen pt-20 lg:pt-4">
         {renderContent()}
       </main>
     </div>
