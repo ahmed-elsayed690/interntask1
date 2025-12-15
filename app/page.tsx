@@ -6,7 +6,6 @@ import Sidebar from './component/Sidebar';
 import HeaderBanner from './component/HeaderBanner';
 import ModulesSection from './component/ModulesSection';
 import FooterSection from './component/FooterSection';
-import ThemeToggle from './component/ThemeToggle';
 import QuizzesPage from './component/QuizzesPage';
 
 export default function Page() {
@@ -23,7 +22,6 @@ export default function Page() {
             <HeaderBanner />
             <ModulesSection />
             <FooterSection />
-            <ThemeToggle />
           </>
         );
     }
