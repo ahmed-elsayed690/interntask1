@@ -18,6 +18,7 @@ import {
   X
 } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
+import ThemeToggle from './ThemeToggle'; // Add this import
 import { useLanguage } from './LanguageContext';
 
 interface SidebarProps {
@@ -97,7 +98,13 @@ export default function Sidebar({ activePage, onPageChange }: SidebarProps) {
             />
           </div>
 
-          {/* Hamburger Menu Button in the center */}
+          {/* Center buttons */}
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
+
+          {/* Hamburger Menu Button on the right */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 bg-[#0f1431] text-white rounded-lg hover:bg-[#1a1f3f] transition-colors"
@@ -106,11 +113,6 @@ export default function Sidebar({ activePage, onPageChange }: SidebarProps) {
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-
-          {/* Language Switcher on the right */}
-          <div className="flex-shrink-0">
-            <LanguageSwitcher />
-          </div>
         </div>
       </div>
 
@@ -189,12 +191,15 @@ export default function Sidebar({ activePage, onPageChange }: SidebarProps) {
             })}
           </nav>
           
-          {/* Bottom Section - Language Switcher (Desktop only) */}
+          {/* Bottom Section - Language Switcher and Theme Toggle (Desktop only) */}
           <div className="mt-auto pt-6 border-t border-gray-700 hidden lg:block">
-            <div className={`flex items-center ${
-              (isSidebarHovered && !isMobile) ? 'justify-start' : 'justify-center'
-            }`}>
-              <LanguageSwitcher />
+            <div className={`flex flex-col gap-3 ${(isSidebarHovered && !isMobile) ? 'items-start' : 'items-center'}`}>
+              <div className={`flex items-center ${(isSidebarHovered && !isMobile) ? 'justify-start' : 'justify-center'} w-full`}>
+                <LanguageSwitcher />
+              </div>
+              <div className={`flex items-center ${(isSidebarHovered && !isMobile) ? 'justify-start' : 'justify-center'} w-full`}>
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         </div>
