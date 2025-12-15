@@ -1,11 +1,394 @@
 "use client";
 
 import { useState, createContext, useContext } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Menu } from 'lucide-react';
 
 // Create a simple language context
 const LanguageContext = createContext<{ language: 'en' | 'ar' }>({ language: 'en' });
 const useLanguage = () => useContext(LanguageContext);
+
+// Module content data
+const moduleContent = {
+  "01": {
+    en: {
+      title: "Module 1. Diversity Management and High Athletic Performance",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "Introduction",
+          content: "Globalization and access to technology have generated one of the most significant demographic changes in recent years in the world of organizations. The incorporation of various generations operating under different paradigms; competition between different age groups face the challenge of finding common work spaces. The environment of sports communities, regardless of where they may be located, the competitive level, the athletes' genders and ages, are not exempt from this reality. What's more, they are fully involved in it." 
+        },
+        { 
+          id: "unit1-1", 
+          title: "Unit 1.1 Psycho-Social Traits of Generational Diversity",
+          content: "The time gap separating one generation from the other has undeniably decreased, and the differences in personalities, interests and objectives occupy a more than significant role in various action areas, including sports, both in the training and the competitive level." 
+        },
+        { 
+          id: "unit1-1-1", 
+          title: "1.1.1 Baby Boomers (born between 1944 – 1960)",
+          content: "Baby Boomers are characterized by their strong work ethic, loyalty, and competitive nature. In sports, they often value discipline and traditional coaching methods." 
+        },
+        { 
+          id: "unit1-1-2", 
+          title: "1.1.2 Generation X (born between 1961 – 1980)",
+          content: "Generation X brings independence, adaptability, and a balance between work and life. They appreciate direct communication and results-oriented approaches in athletic environments." 
+        },
+        { 
+          id: "unit1-2", 
+          title: "Unit 1.2 Generational Diversity in Training Processes",
+          content: "Understanding how different generations communicate and learn is essential for effective coaching and team management in modern sports organizations." 
+        }
+      ]
+    },
+    ar: {
+      title: "الوحدة 1. إدارة التنوع والأداء الرياضي العالي",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "مقدمة", 
+          content: "لقد أدت العولمة والوصول إلى التكنولوجيا إلى توليد واحد من أهم التغييرات الديموغرافية في السنوات الأخيرة في عالم المنظمات." 
+        },
+        { 
+          id: "unit1-1", 
+          title: "الوحدة 1.1 السمات النفسية والاجتماعية للتنوع الجيلي",
+          content: "محتوى الوحدة 1.1 بالعربية..." 
+        }
+      ]
+    }
+  },
+  "02": {
+    en: {
+      title: "Module 2. Leadership and Team Dynamics in Sports",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "Introduction",
+          content: "Leadership in sports requires a unique blend of strategic thinking, emotional intelligence, and the ability to inspire diverse groups of athletes. This module explores modern leadership approaches in high-performance athletic environments." 
+        },
+        { 
+          id: "unit2-1", 
+          title: "Unit 2.1 Leadership Styles in Sports",
+          content: "Different leadership styles impact team performance in various ways. Understanding when to apply democratic, autocratic, or transformational leadership is crucial for success." 
+        },
+        { 
+          id: "unit2-2", 
+          title: "Unit 2.2 Building High-Performance Teams",
+          content: "Creating cohesive, high-performing teams requires attention to group dynamics, communication patterns, and conflict resolution strategies." 
+        },
+        { 
+          id: "unit2-3", 
+          title: "Unit 2.3 Motivating Athletes",
+          content: "Motivation techniques vary across individuals and situations. This unit covers intrinsic and extrinsic motivation strategies for peak performance." 
+        }
+      ]
+    },
+    ar: {
+      title: "الوحدة 2. القيادة وديناميكيات الفريق في الرياضة",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "مقدمة", 
+          content: "تتطلب القيادة في الرياضة مزيجًا فريدًا من التفكير الاستراتيجي والذكاء العاطفي..." 
+        },
+        { 
+          id: "unit2-1", 
+          title: "الوحدة 2.1 أنماط القيادة في الرياضة",
+          content: "محتوى الوحدة 2.1 بالعربية..." 
+        }
+      ]
+    }
+  },
+  "03": {
+    en: {
+      title: "Module 3. Performance Analysis and Data-Driven Decision Making",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "Introduction",
+          content: "Modern sports organizations rely heavily on data analytics to gain competitive advantages. This module introduces key concepts in sports analytics and performance measurement." 
+        },
+        { 
+          id: "unit3-1", 
+          title: "Unit 3.1 Key Performance Indicators (KPIs)",
+          content: "Identifying and tracking the right metrics is essential for performance improvement. Learn how to select and interpret KPIs relevant to your sport and position." 
+        },
+        { 
+          id: "unit3-2", 
+          title: "Unit 3.2 Video Analysis Techniques",
+          content: "Video analysis has revolutionized coaching and player development. Discover effective methods for breaking down game footage and identifying areas for improvement." 
+        },
+        { 
+          id: "unit3-3", 
+          title: "Unit 3.3 Wearable Technology and Biometrics",
+          content: "Wearable devices provide real-time data on athlete performance and health. Understand how to leverage this technology for training optimization." 
+        },
+        { 
+          id: "unit3-4", 
+          title: "Unit 3.4 Data-Driven Strategy Development",
+          content: "Transform raw data into actionable insights. Learn frameworks for using analytics to inform tactical decisions and long-term planning." 
+        }
+      ]
+    },
+    ar: {
+      title: "الوحدة 3. تحليل الأداء واتخاذ القرارات المستندة إلى البيانات",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "مقدمة", 
+          content: "تعتمد المنظمات الرياضية الحديثة بشكل كبير على تحليلات البيانات..." 
+        },
+        { 
+          id: "unit3-1", 
+          title: "الوحدة 3.1 مؤشرات الأداء الرئيسية",
+          content: "محتوى الوحدة 3.1 بالعربية..." 
+        }
+      ]
+    }
+  },
+  "04": {
+    en: {
+      title: "Module 4. Sports Psychology and Mental Performance",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "Introduction",
+          content: "Mental preparation is as important as physical training in achieving peak athletic performance. This module covers essential psychological skills for athletes and coaches." 
+        },
+        { 
+          id: "unit4-1", 
+          title: "Unit 4.1 Concentration and Focus",
+          content: "Developing the ability to maintain focus under pressure is critical for competitive success. Learn techniques to enhance concentration during training and competition." 
+        },
+        { 
+          id: "unit4-2", 
+          title: "Unit 4.2 Managing Pressure and Anxiety",
+          content: "All athletes experience pressure. Discover strategies to manage competitive anxiety and perform at your best when it matters most." 
+        },
+        { 
+          id: "unit4-3", 
+          title: "Unit 4.3 Goal Setting and Visualization",
+          content: "Effective goal setting and mental imagery are powerful tools for performance enhancement. Learn how to apply these techniques systematically." 
+        },
+        { 
+          id: "unit4-4", 
+          title: "Unit 4.4 Building Mental Resilience",
+          content: "Resilience enables athletes to bounce back from setbacks and maintain performance under adversity. Develop your mental toughness through proven methods." 
+        }
+      ]
+    },
+    ar: {
+      title: "الوحدة 4. علم النفس الرياضي والأداء العقلي",
+      lessons: [
+        { 
+          id: "intro", 
+          title: "مقدمة", 
+          content: "الإعداد العقلي لا يقل أهمية عن التدريب البدني في تحقيق الأداء الرياضي الأمثل..." 
+        },
+        { 
+          id: "unit4-1", 
+          title: "الوحدة 4.1 التركيز والانتباه",
+          content: "محتوى الوحدة 4.1 بالعربية..." 
+        }
+      ]
+    }
+  }
+};
+
+// Video data for each module
+const moduleVideos = {
+  "01": {
+    en: {
+      title: "Module 1 Videos",
+      videos: [
+        { 
+          id: "intro", 
+          title: "Introduction to Diversity Management",
+          youtubeId: "dQw4w9WgXcQ",
+          description: "An overview of diversity management concepts in sports organizations." 
+        },
+        { 
+          id: "gen-diversity", 
+          title: "Generational Diversity in Sports",
+          youtubeId: "9bZkp7q19f0",
+          description: "Understanding different generations in athletic environments." 
+        },
+        { 
+          id: "case-study", 
+          title: "Case Study: FC Barcelona",
+          youtubeId: "L_jWHffIx5E",
+          description: "How FC Barcelona manages diverse teams for high performance." 
+        }
+      ]
+    },
+    ar: {
+      title: "مقاطع فيديو الوحدة 1",
+      videos: [
+        { 
+          id: "intro", 
+          title: "مقدمة في إدارة التنوع",
+          youtubeId: "dQw4w9WgXcQ",
+          description: "نظرة عامة على مفاهيم إدارة التنوع في المنظمات الرياضية." 
+        },
+        { 
+          id: "gen-diversity", 
+          title: "التنوع الجيلي في الرياضة",
+          youtubeId: "9bZkp7q19f0",
+          description: "فهم الأجيال المختلفة في البيئات الرياضية." 
+        },
+        { 
+          id: "case-study", 
+          title: "دراسة حالة: نادي برشلونة",
+          youtubeId: "L_jWHffIx5E",
+          description: "كيف يدير برشلونة الفرق المتنوعة لتحقيق الأداء العالي." 
+        }
+      ]
+    }
+  },
+  "02": {
+    en: {
+      title: "Module 2 Videos",
+      videos: [
+        { 
+          id: "leadership-intro", 
+          title: "Leadership in Modern Sports",
+          youtubeId: "oC_Gj4DEnrE",
+          description: "Exploring contemporary leadership approaches." 
+        },
+        { 
+          id: "team-dynamics", 
+          title: "Team Dynamics Workshop",
+          youtubeId: "Fdf5aTYRW0E",
+          description: "Practical exercises for building team cohesion." 
+        },
+        { 
+          id: "motivation", 
+          title: "Motivational Techniques",
+          youtubeId: "sGbxmsDFVnE",
+          description: "Strategies for motivating diverse athlete groups." 
+        }
+      ]
+    },
+    ar: {
+      title: "مقاطع فيديو الوحدة 2",
+      videos: [
+        { 
+          id: "leadership-intro", 
+          title: "القيادة في الرياضة الحديثة",
+          youtubeId: "oC_Gj4DEnrE",
+          description: "استكشاف نهج القيادة المعاصرة." 
+        },
+        { 
+          id: "team-dynamics", 
+          title: "ورشة عمل ديناميكيات الفريق",
+          youtubeId: "Fdf5aTYRW0E",
+          description: "تمارين عملية لبناء التماسك الجماعي." 
+        },
+        { 
+          id: "motivation", 
+          title: "تقنيات التحفيز",
+          youtubeId: "sGbxmsDFVnE",
+          description: "استراتيجيات لتحفيز مجموعات الرياضيين المتنوعة." 
+        }
+      ]
+    }
+  },
+  "03": {
+    en: {
+      title: "Module 3 Videos",
+      videos: [
+        { 
+          id: "analytics-intro", 
+          title: "Introduction to Sports Analytics",
+          youtubeId: "BBJa32lCaaY",
+          description: "The role of data in modern sports management." 
+        },
+        { 
+          id: "video-analysis", 
+          title: "Video Analysis Techniques",
+          youtubeId: "T7eWQ0qeDDU",
+          description: "How to effectively analyze game footage." 
+        },
+        { 
+          id: "wearable-tech", 
+          title: "Wearable Technology Demo",
+          youtubeId: "M4cg3Hx5Lz4",
+          description: "Demonstration of biometric tracking devices." 
+        }
+      ]
+    },
+    ar: {
+      title: "مقاطع فيديو الوحدة 3",
+      videos: [
+        { 
+          id: "analytics-intro", 
+          title: "مقدمة في التحليلات الرياضية",
+          youtubeId: "BBJa32lCaaY",
+          description: "دور البيانات في الإدارة الرياضية الحديثة." 
+        },
+        { 
+          id: "video-analysis", 
+          title: "تقنيات تحليل الفيديو",
+          youtubeId: "T7eWQ0qeDDU",
+          description: "كيفية تحليل لقطات المباراة بفعالية." 
+        },
+        { 
+          id: "wearable-tech", 
+          title: "عرض تجريبي للتكنولوجيا القابلة للارتداء",
+          youtubeId: "M4cg3Hx5Lz4",
+          description: "عرض توضيحي لأجهزة التتبع البيومترية." 
+        }
+      ]
+    }
+  },
+  "04": {
+    en: {
+      title: "Module 4 Videos",
+      videos: [
+        { 
+          id: "psychology-intro", 
+          title: "Sports Psychology Basics",
+          youtubeId: "yPYZpwSpKmA",
+          description: "Fundamental psychological principles for athletes." 
+        },
+        { 
+          id: "mental-toughness", 
+          title: "Building Mental Toughness",
+          youtubeId: "n9h0XzK-0nY",
+          description: "Exercises to develop psychological resilience." 
+        },
+        { 
+          id: "visualization", 
+          title: "Visualization Techniques",
+          youtubeId: "Oo8wS6I6r5g",
+          description: "How to use mental imagery for performance enhancement." 
+        }
+      ]
+    },
+    ar: {
+      title: "مقاطع فيديو الوحدة 4",
+      videos: [
+        { 
+          id: "psychology-intro", 
+          title: "أساسيات علم النفس الرياضي",
+          youtubeId: "yPYZpwSpKmA",
+          description: "المبادئ النفسية الأساسية للرياضيين." 
+        },
+        { 
+          id: "mental-toughness", 
+          title: "بناء الصلابة النفسية",
+          youtubeId: "n9h0XzK-0nY",
+          description: "تمارين لتطوير المرونة النفسية." 
+        },
+        { 
+          id: "visualization", 
+          title: "تقنيات التصور",
+          youtubeId: "Oo8wS6I6r5g",
+          description: "كيفية استخدام الصور الذهنية لتحسين الأداء." 
+        }
+      ]
+    }
+  }
+};
 
 interface ModuleCardProps {
   number: string;
@@ -25,193 +408,7 @@ function ReadingModal({
   const [currentView, setCurrentView] = useState<'landing' | 'list' | 'content'>('landing');
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const [currentSection, setCurrentSection] = useState<'reading' | 'video' | 'self-assessment'>('reading');
-
-  // Module content data
-  const moduleContent = {
-    "01": {
-      en: {
-        title: "Module 1. Diversity Management and High Athletic Performance",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "Introduction",
-            content: "Globalization and access to technology have generated one of the most significant demographic changes in recent years in the world of organizations. The incorporation of various generations operating under different paradigms; competition between different age groups face the challenge of finding common work spaces. The environment of sports communities, regardless of where they may be located, the competitive level, the athletes' genders and ages, are not exempt from this reality. What's more, they are fully involved in it." 
-          },
-          { 
-            id: "unit1-1", 
-            title: "Unit 1.1 Psycho-Social Traits of Generational Diversity",
-            content: "The time gap separating one generation from the other has undeniably decreased, and the differences in personalities, interests and objectives occupy a more than significant role in various action areas, including sports, both in the training and the competitive level." 
-          },
-          { 
-            id: "unit1-1-1", 
-            title: "1.1.1 Baby Boomers (born between 1944 – 1960)",
-            content: "Baby Boomers are characterized by their strong work ethic, loyalty, and competitive nature. In sports, they often value discipline and traditional coaching methods." 
-          },
-          { 
-            id: "unit1-1-2", 
-            title: "1.1.2 Generation X (born between 1961 – 1980)",
-            content: "Generation X brings independence, adaptability, and a balance between work and life. They appreciate direct communication and results-oriented approaches in athletic environments." 
-          },
-          { 
-            id: "unit1-2", 
-            title: "Unit 1.2 Generational Diversity in Training Processes",
-            content: "Understanding how different generations communicate and learn is essential for effective coaching and team management in modern sports organizations." 
-          }
-        ]
-      },
-      ar: {
-        title: "الوحدة 1. إدارة التنوع والأداء الرياضي العالي",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "مقدمة", 
-            content: "لقد أدت العولمة والوصول إلى التكنولوجيا إلى توليد واحد من أهم التغييرات الديموغرافية في السنوات الأخيرة في عالم المنظمات." 
-          },
-          { 
-            id: "unit1-1", 
-            title: "الوحدة 1.1 السمات النفسية والاجتماعية للتنوع الجيلي",
-            content: "محتوى الوحدة 1.1 بالعربية..." 
-          }
-        ]
-      }
-    },
-    "02": {
-      en: {
-        title: "Module 2. Leadership and Team Dynamics in Sports",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "Introduction",
-            content: "Leadership in sports requires a unique blend of strategic thinking, emotional intelligence, and the ability to inspire diverse groups of athletes. This module explores modern leadership approaches in high-performance athletic environments." 
-          },
-          { 
-            id: "unit2-1", 
-            title: "Unit 2.1 Leadership Styles in Sports",
-            content: "Different leadership styles impact team performance in various ways. Understanding when to apply democratic, autocratic, or transformational leadership is crucial for success." 
-          },
-          { 
-            id: "unit2-2", 
-            title: "Unit 2.2 Building High-Performance Teams",
-            content: "Creating cohesive, high-performing teams requires attention to group dynamics, communication patterns, and conflict resolution strategies." 
-          },
-          { 
-            id: "unit2-3", 
-            title: "Unit 2.3 Motivating Athletes",
-            content: "Motivation techniques vary across individuals and situations. This unit covers intrinsic and extrinsic motivation strategies for peak performance." 
-          }
-        ]
-      },
-      ar: {
-        title: "الوحدة 2. القيادة وديناميكيات الفريق في الرياضة",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "مقدمة", 
-            content: "تتطلب القيادة في الرياضة مزيجًا فريدًا من التفكير الاستراتيجي والذكاء العاطفي..." 
-          },
-          { 
-            id: "unit2-1", 
-            title: "الوحدة 2.1 أنماط القيادة في الرياضة",
-            content: "محتوى الوحدة 2.1 بالعربية..." 
-          }
-        ]
-      }
-    },
-    "03": {
-      en: {
-        title: "Module 3. Performance Analysis and Data-Driven Decision Making",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "Introduction",
-            content: "Modern sports organizations rely heavily on data analytics to gain competitive advantages. This module introduces key concepts in sports analytics and performance measurement." 
-          },
-          { 
-            id: "unit3-1", 
-            title: "Unit 3.1 Key Performance Indicators (KPIs)",
-            content: "Identifying and tracking the right metrics is essential for performance improvement. Learn how to select and interpret KPIs relevant to your sport and position." 
-          },
-          { 
-            id: "unit3-2", 
-            title: "Unit 3.2 Video Analysis Techniques",
-            content: "Video analysis has revolutionized coaching and player development. Discover effective methods for breaking down game footage and identifying areas for improvement." 
-          },
-          { 
-            id: "unit3-3", 
-            title: "Unit 3.3 Wearable Technology and Biometrics",
-            content: "Wearable devices provide real-time data on athlete performance and health. Understand how to leverage this technology for training optimization." 
-          },
-          { 
-            id: "unit3-4", 
-            title: "Unit 3.4 Data-Driven Strategy Development",
-            content: "Transform raw data into actionable insights. Learn frameworks for using analytics to inform tactical decisions and long-term planning." 
-          }
-        ]
-      },
-      ar: {
-        title: "الوحدة 3. تحليل الأداء واتخاذ القرارات المستندة إلى البيانات",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "مقدمة", 
-            content: "تعتمد المنظمات الرياضية الحديثة بشكل كبير على تحليلات البيانات..." 
-          },
-          { 
-            id: "unit3-1", 
-            title: "الوحدة 3.1 مؤشرات الأداء الرئيسية",
-            content: "محتوى الوحدة 3.1 بالعربية..." 
-          }
-        ]
-      }
-    },
-    "04": {
-      en: {
-        title: "Module 4. Sports Psychology and Mental Performance",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "Introduction",
-            content: "Mental preparation is as important as physical training in achieving peak athletic performance. This module covers essential psychological skills for athletes and coaches." 
-          },
-          { 
-            id: "unit4-1", 
-            title: "Unit 4.1 Concentration and Focus",
-            content: "Developing the ability to maintain focus under pressure is critical for competitive success. Learn techniques to enhance concentration during training and competition." 
-          },
-          { 
-            id: "unit4-2", 
-            title: "Unit 4.2 Managing Pressure and Anxiety",
-            content: "All athletes experience pressure. Discover strategies to manage competitive anxiety and perform at your best when it matters most." 
-          },
-          { 
-            id: "unit4-3", 
-            title: "Unit 4.3 Goal Setting and Visualization",
-            content: "Effective goal setting and mental imagery are powerful tools for performance enhancement. Learn how to apply these techniques systematically." 
-          },
-          { 
-            id: "unit4-4", 
-            title: "Unit 4.4 Building Mental Resilience",
-            content: "Resilience enables athletes to bounce back from setbacks and maintain performance under adversity. Develop your mental toughness through proven methods." 
-          }
-        ]
-      },
-      ar: {
-        title: "الوحدة 4. علم النفس الرياضي والأداء العقلي",
-        lessons: [
-          { 
-            id: "intro", 
-            title: "مقدمة", 
-            content: "الإعداد العقلي لا يقل أهمية عن التدريب البدني في تحقيق الأداء الرياضي الأمثل..." 
-          },
-          { 
-            id: "unit4-1", 
-            title: "الوحدة 4.1 التركيز والانتباه",
-            content: "محتوى الوحدة 4.1 بالعربية..." 
-          }
-        ]
-      }
-    }
-  };
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const content = moduleContent[moduleNumber as keyof typeof moduleContent]?.[language];
   const currentLesson = content?.lessons.find(l => l.id === selectedLesson);
@@ -310,9 +507,25 @@ function ReadingModal({
   const totalLessons = content.lessons.length;
 
   return (
-    <div className="fixed inset-0 bg-white z-[100] flex">
+    <div className="fixed inset-0 bg-white z-[100] flex flex-col lg:flex-row">
+      {/* Mobile Menu Button */}
+      <button 
+        onClick={() => setShowSidebar(!showSidebar)} 
+        className="lg:hidden fixed top-4 left-4 z-30 bg-gray-900 text-white p-2 rounded-lg shadow-lg"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
+
       {/* Sidebar */}
-      <div className="w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto relative">
+      <div className={`${showSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto h-full transition-transform duration-300 z-20`}>
+        {/* Mobile close button */}
+        <button 
+          onClick={() => setShowSidebar(false)} 
+          className="lg:hidden absolute top-4 right-4 text-white"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
         {/* Module Header with Background Image */}
         <div className="h-48 bg-gradient-to-br from-gray-700 to-gray-900 relative flex items-center justify-center p-6">
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -332,10 +545,13 @@ function ReadingModal({
         {/* Lesson Navigation */}
         <div className="p-4">
           <nav className="space-y-2">
-            {content.lessons.map((lesson, index) => (
+            {content.lessons.map((lesson) => (
               <div
                 key={lesson.id}
-                onClick={() => setSelectedLesson(lesson.id)}
+                onClick={() => {
+                  setSelectedLesson(lesson.id);
+                  setShowSidebar(false);
+                }}
                 className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   selectedLesson === lesson.id
                     ? 'bg-gray-700 text-white'
@@ -354,6 +570,14 @@ function ReadingModal({
           </nav>
         </div>
       </div>
+
+      {/* Overlay for mobile */}
+      {showSidebar && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-10" 
+          onClick={() => setShowSidebar(false)} 
+        />
+      )}
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto relative flex flex-col">
@@ -456,202 +680,7 @@ function VideoModal({
   const { language } = useLanguage();
   const [currentVideoIndex, setCurrentVideoIndex] = useState<number>(0);
   const [currentSection, setCurrentSection] = useState<'video' | 'reading' | 'self-assessment'>('video');
-
-  // Video data for each module
-  const moduleVideos = {
-    "01": {
-      en: {
-        title: "Module 1 Videos",
-        videos: [
-          { 
-            id: "intro", 
-            title: "Introduction to Diversity Management",
-            youtubeId: "dQw4w9WgXcQ",
-            description: "An overview of diversity management concepts in sports organizations." 
-          },
-          { 
-            id: "gen-diversity", 
-            title: "Generational Diversity in Sports",
-            youtubeId: "9bZkp7q19f0",
-            description: "Understanding different generations in athletic environments." 
-          },
-          { 
-            id: "case-study", 
-            title: "Case Study: FC Barcelona",
-            youtubeId: "L_jWHffIx5E",
-            description: "How FC Barcelona manages diverse teams for high performance." 
-          }
-        ]
-      },
-      ar: {
-        title: "مقاطع فيديو الوحدة 1",
-        videos: [
-          { 
-            id: "intro", 
-            title: "مقدمة في إدارة التنوع",
-            youtubeId: "dQw4w9WgXcQ",
-            description: "نظرة عامة على مفاهيم إدارة التنوع في المنظمات الرياضية." 
-          },
-          { 
-            id: "gen-diversity", 
-            title: "التنوع الجيلي في الرياضة",
-            youtubeId: "9bZkp7q19f0",
-            description: "فهم الأجيال المختلفة في البيئات الرياضية." 
-          },
-          { 
-            id: "case-study", 
-            title: "دراسة حالة: نادي برشلونة",
-            youtubeId: "L_jWHffIx5E",
-            description: "كيف يدير برشلونة الفرق المتنوعة لتحقيق الأداء العالي." 
-          }
-        ]
-      }
-    },
-    "02": {
-      en: {
-        title: "Module 2 Videos",
-        videos: [
-          { 
-            id: "leadership-intro", 
-            title: "Leadership in Modern Sports",
-            youtubeId: "oC_Gj4DEnrE",
-            description: "Exploring contemporary leadership approaches." 
-          },
-          { 
-            id: "team-dynamics", 
-            title: "Team Dynamics Workshop",
-            youtubeId: "Fdf5aTYRW0E",
-            description: "Practical exercises for building team cohesion." 
-          },
-          { 
-            id: "motivation", 
-            title: "Motivational Techniques",
-            youtubeId: "sGbxmsDFVnE",
-            description: "Strategies for motivating diverse athlete groups." 
-          }
-        ]
-      },
-      ar: {
-        title: "مقاطع فيديو الوحدة 2",
-        videos: [
-          { 
-            id: "leadership-intro", 
-            title: "القيادة في الرياضة الحديثة",
-            youtubeId: "oC_Gj4DEnrE",
-            description: "استكشاف نهج القيادة المعاصرة." 
-          },
-          { 
-            id: "team-dynamics", 
-            title: "ورشة عمل ديناميكيات الفريق",
-            youtubeId: "Fdf5aTYRW0E",
-            description: "تمارين عملية لبناء التماسك الجماعي." 
-          },
-          { 
-            id: "motivation", 
-            title: "تقنيات التحفيز",
-            youtubeId: "sGbxmsDFVnE",
-            description: "استراتيجيات لتحفيز مجموعات الرياضيين المتنوعة." 
-          }
-        ]
-      }
-    },
-    "03": {
-      en: {
-        title: "Module 3 Videos",
-        videos: [
-          { 
-            id: "analytics-intro", 
-            title: "Introduction to Sports Analytics",
-            youtubeId: "BBJa32lCaaY",
-            description: "The role of data in modern sports management." 
-          },
-          { 
-            id: "video-analysis", 
-            title: "Video Analysis Techniques",
-            youtubeId: "T7eWQ0qeDDU",
-            description: "How to effectively analyze game footage." 
-          },
-          { 
-            id: "wearable-tech", 
-            title: "Wearable Technology Demo",
-            youtubeId: "M4cg3Hx5Lz4",
-            description: "Demonstration of biometric tracking devices." 
-          }
-        ]
-      },
-      ar: {
-        title: "مقاطع فيديو الوحدة 3",
-        videos: [
-          { 
-            id: "analytics-intro", 
-            title: "مقدمة في التحليلات الرياضية",
-            youtubeId: "BBJa32lCaaY",
-            description: "دور البيانات في الإدارة الرياضية الحديثة." 
-          },
-          { 
-            id: "video-analysis", 
-            title: "تقنيات تحليل الفيديو",
-            youtubeId: "T7eWQ0qeDDU",
-            description: "كيفية تحليل لقطات المباراة بفعالية." 
-          },
-          { 
-            id: "wearable-tech", 
-            title: "عرض تجريبي للتكنولوجيا القابلة للارتداء",
-            youtubeId: "M4cg3Hx5Lz4",
-            description: "عرض توضيحي لأجهزة التتبع البيومترية." 
-          }
-        ]
-      }
-    },
-    "04": {
-      en: {
-        title: "Module 4 Videos",
-        videos: [
-          { 
-            id: "psychology-intro", 
-            title: "Sports Psychology Basics",
-            youtubeId: "yPYZpwSpKmA",
-            description: "Fundamental psychological principles for athletes." 
-          },
-          { 
-            id: "mental-toughness", 
-            title: "Building Mental Toughness",
-            youtubeId: "n9h0XzK-0nY",
-            description: "Exercises to develop psychological resilience." 
-          },
-          { 
-            id: "visualization", 
-            title: "Visualization Techniques",
-            youtubeId: "Oo8wS6I6r5g",
-            description: "How to use mental imagery for performance enhancement." 
-          }
-        ]
-      },
-      ar: {
-        title: "مقاطع فيديو الوحدة 4",
-        videos: [
-          { 
-            id: "psychology-intro", 
-            title: "أساسيات علم النفس الرياضي",
-            youtubeId: "yPYZpwSpKmA",
-            description: "المبادئ النفسية الأساسية للرياضيين." 
-          },
-          { 
-            id: "mental-toughness", 
-            title: "بناء الصلابة النفسية",
-            youtubeId: "n9h0XzK-0nY",
-            description: "تمارين لتطوير المرونة النفسية." 
-          },
-          { 
-            id: "visualization", 
-            title: "تقنيات التصور",
-            youtubeId: "Oo8wS6I6r5g",
-            description: "كيفية استخدام الصور الذهنية لتحسين الأداء." 
-          }
-        ]
-      }
-    }
-  };
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const content = moduleVideos[moduleNumber as keyof typeof moduleVideos]?.[language];
   const currentVideo = content?.videos[currentVideoIndex];
@@ -676,9 +705,25 @@ function VideoModal({
   if (!content) return null;
 
   return (
-    <div className="fixed inset-0 bg-white z-[100] flex">
+    <div className="fixed inset-0 bg-white z-[100] flex flex-col lg:flex-row">
+      {/* Mobile Menu Button */}
+      <button 
+        onClick={() => setShowSidebar(!showSidebar)} 
+        className="lg:hidden fixed top-4 left-4 z-30 bg-gray-900 text-white p-2 rounded-lg shadow-lg"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
+
       {/* Sidebar with video thumbnails */}
-      <div className="w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto">
+      <div className={`${showSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto h-full transition-transform duration-300 z-20`}>
+        {/* Mobile close button */}
+        <button 
+          onClick={() => setShowSidebar(false)} 
+          className="lg:hidden absolute top-4 right-4 text-white"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
         {/* Module Header */}
         <div className="h-48 bg-gradient-to-br from-gray-700 to-gray-900 relative flex items-center justify-center p-6">
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -694,7 +739,10 @@ function VideoModal({
             {content.videos.map((video, index) => (
               <div
                 key={video.id}
-                onClick={() => setCurrentVideoIndex(index)}
+                onClick={() => {
+                  setCurrentVideoIndex(index);
+                  setShowSidebar(false);
+                }}
                 className={`cursor-pointer rounded-lg overflow-hidden transition-all ${
                   currentVideoIndex === index
                     ? 'ring-2 ring-blue-500'
@@ -724,6 +772,14 @@ function VideoModal({
           </div>
         </div>
       </div>
+
+      {/* Overlay for mobile */}
+      {showSidebar && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-10" 
+          onClick={() => setShowSidebar(false)} 
+        />
+      )}
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto relative flex flex-col">
@@ -810,13 +866,8 @@ function VideoModal({
   );
 }
 
-interface ModuleCardProps {
-  number: string;
-  items: string[];
-  language?: 'en' | 'ar';
-}
-
-export default function ModuleCard({ number, items = [], language = 'en' }: ModuleCardProps) {
+// Main ModuleCard Component
+function ModuleCard({ number, items = [], language = 'en' }: ModuleCardProps) {
   const [showReadingModal, setShowReadingModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
 
@@ -870,3 +921,5 @@ export default function ModuleCard({ number, items = [], language = 'en' }: Modu
     </LanguageContext.Provider>
   );
 }
+
+export default ModuleCard;
