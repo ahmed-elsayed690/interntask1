@@ -148,3 +148,156 @@ body {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
 }
+
+/* Add to globals.css - Quiz specific utility classes */
+.quiz-container {
+  @apply bg-white min-h-full;
+}
+
+.quiz-header {
+  @apply text-3xl font-bold text-gray-900 mb-6;
+}
+
+.quiz-stats-grid {
+  @apply flex flex-wrap gap-6 mb-6;
+}
+
+.quiz-stat-item {
+  @apply flex-1 min-w-[200px];
+}
+
+.quiz-stat-label {
+  @apply text-sm text-gray-600 mb-1;
+}
+
+.quiz-stat-value {
+  @apply text-lg font-semibold;
+}
+
+.quiz-card {
+  @apply bg-gray-50 p-6 rounded-lg;
+}
+
+.quiz-card-header {
+  @apply text-2xl font-bold text-gray-900 mb-4;
+}
+
+.quiz-section {
+  @apply mb-6;
+}
+
+.quiz-section-header {
+  @apply text-xl font-semibold text-gray-800 mb-3;
+}
+
+.quiz-text {
+  @apply text-gray-700 mb-3;
+}
+
+.quiz-list {
+  @apply space-y-2;
+}
+
+.quiz-list-item {
+  @apply flex items-start;
+}
+
+.quiz-divider {
+  @apply border-t border-gray-300 my-8;
+}
+
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold px-10 py-3 rounded-lg transition-colors;
+}
+
+/* Dark mode support */
+.dark .quiz-card {
+  @apply bg-gray-900;
+}
+
+.dark .quiz-text {
+  @apply text-gray-300;
+}
+
+.dark .quiz-card-header {
+  @apply text-gray-100;
+}
+
+.dark .quiz-section-header {
+  @apply text-gray-200;
+}
+
+/* Add these rules to your existing globals.css file */
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Prevent horizontal scroll */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Better touch targets for mobile */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve text readability on mobile */
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Make images responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Better spacing for mobile viewports */
+  .mobile-spacing {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Smooth transitions for sidebar */
+.sidebar-transition {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fix for fixed positioned elements on mobile */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific fixes */
+  .fixed {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+}
+
+/* Improve tap highlights on mobile */
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Better scrolling on mobile */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media screen and (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Dark mode mobile improvements */
+@media (max-width: 640px) {
+  .dark {
+    /* Ensure proper contrast on small screens */
+    color-contrast: aa-large;
+  }
+}
+
