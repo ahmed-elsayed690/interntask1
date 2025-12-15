@@ -35,13 +35,38 @@ export default function Sidebar({ activePage, onPageChange }: SidebarProps) {
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+      setIsMobile(window.innerWidth < 1024);
     };
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Close mobile menu on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMobileMenuOpen]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen, isMobile]);
 
   const menuItems = [
     { icon: Home, label: t('home', 'sidebar'), id: 'home' },
@@ -60,79 +85,114 @@ export default function Sidebar({ activePage, onPageChange }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile Hamburger Button - Only show on mobile */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="fixed top-4 left-4 z-50 p-2 bg-[#0f1431] text-white rounded-lg lg:hidden"
-        aria-label="Toggle menu"
-      >
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      {/* Mobile Top Bar - Only visible on mobile */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-[#1e293b] shadow-md lg:hidden">
+        <div className="flex items-center justify-between px-4 py-3">
+          {/* Barcelona Logo on the left */}
+          <div className="w-10 h-10 flex-shrink-0">
+            <img 
+              src="/favicon.ico" 
+              alt="Barcelona" 
+              className="w-full h-full object-contain"
+            />
+          </div>
 
-      {/* Mobile Sidebar Overlay */}
-      {isMobileMenuOpen && (
+          {/* Hamburger Menu Button in the center */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 bg-[#0f1431] text-white rounded-lg hover:bg-[#1a1f3f] transition-colors"
+            aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          {/* Language Switcher on the right */}
+          <div className="flex-shrink-0">
+            <LanguageSwitcher />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Overlay with semi-transparent background */}
+      {isMobileMenuOpen && isMobile && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-all duration-300"
           onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
         />
       )}
 
-      {/* Desktop & Mobile Sidebar */}
+      {/* Sidebar */}
       <aside 
-        className={`fixed lg:relative top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out
-          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
+        className={`
+          fixed lg:relative 
+          top-0 ${isRTL ? 'right-0' : 'left-0'}
+          h-full z-50 
+          transform transition-all duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')}
           lg:translate-x-0
-          ${isSidebarHovered ? 'w-72' : 'w-20'} 
+          ${isSidebarHovered && !isMobile ? 'w-72' : isMobile && isMobileMenuOpen ? 'w-80 max-w-[85vw]' : 'w-20'} 
           bg-[#0f1431] text-white flex flex-col
-          lg:block
+          shadow-2xl lg:shadow-none
         `}
         onMouseEnter={() => !isMobile && setIsSidebarHovered(true)}
         onMouseLeave={() => !isMobile && setIsSidebarHovered(false)}
       >
-        <div className={`${isMobileMenuOpen ? 'p-6' : isSidebarHovered ? 'p-6' : 'p-4'} flex flex-col h-full`}>
+        <div className={`${(isMobileMenuOpen && isMobile) || isSidebarHovered ? 'p-6' : 'p-4'} flex flex-col h-full overflow-hidden`}>
           {/* Logo/Title */}
-          <div className={`${isSidebarHovered || isMobileMenuOpen ? 'text-2xl' : 'text-sm'} font-bold ${isSidebarHovered || isMobileMenuOpen ? 'mb-8' : 'mb-6 text-center'}`}>
-            {isSidebarHovered || isMobileMenuOpen ? 'BARÇA INNOVATION HUB' : 'BARÇA'}
+          <div className={`
+            ${(isSidebarHovered && !isMobile) || (isMobileMenuOpen && isMobile) ? 'text-xl sm:text-2xl mb-8' : 'text-xs mb-6 text-center'} 
+            font-bold transition-all duration-300
+          `}>
+            {(isSidebarHovered && !isMobile) || (isMobileMenuOpen && isMobile) ? 'BARÇA INNOVATION HUB' : 'BARÇA'}
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-2 overflow-y-auto">
+          <nav className="flex-1 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
             {menuItems.map((item, index) => {
               const IconComponent = item.icon;
               const isActive = activePage === item.id;
+              const isExpanded = (isSidebarHovered && !isMobile) || (isMobileMenuOpen && isMobile);
               
               return (
-                <div 
+                <button 
                   key={index} 
                   onClick={() => {
                     onPageChange(item.id);
                     if (isMobile) setIsMobileMenuOpen(false);
                   }}
-                  className={`flex items-center rounded-md cursor-pointer transition-colors ${
-                    isActive
-                      ? "bg-[#1a1f3f] text-yellow-400" 
+                  className={`
+                    w-full flex items-center rounded-lg cursor-pointer 
+                    transition-all duration-200
+                    ${isActive
+                      ? "bg-[#1a1f3f] text-yellow-400 shadow-md" 
                       : "hover:bg-[#1a1f3f] hover:text-yellow-400"
-                  } ${isSidebarHovered || isMobileMenuOpen ? 'py-2 px-3 justify-start' : 'p-3 justify-center'}`}
+                    } 
+                    ${isExpanded ? 'py-3 px-4 justify-start' : 'p-3 justify-center'}
+                  `}
+                  aria-label={item.label}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   <IconComponent 
-                    className={`${(isSidebarHovered || isMobileMenuOpen) ? (isRTL ? 'ml-3' : 'mr-3') : ''}`}
-                    size={20}
+                    className={`flex-shrink-0 ${isExpanded ? (isRTL ? 'ml-3' : 'mr-3') : ''}`}
+                    size={22}
                     strokeWidth={2}
                   />
-                  {(isSidebarHovered || isMobileMenuOpen) && (
-                    <span className="truncate">
+                  {isExpanded && (
+                    <span className="truncate font-medium text-base">
                       {item.label}
                     </span>
                   )}
-                </div>
+                </button>
               );
             })}
           </nav>
           
-          {/* Bottom Section */}
-          <div className="mt-auto pt-6 border-t border-gray-700">
-            <div className={`flex items-center rounded-md ${
-              (isSidebarHovered || isMobileMenuOpen) ? 'justify-start' : 'justify-center'
+          {/* Bottom Section - Language Switcher (Desktop only) */}
+          <div className="mt-auto pt-6 border-t border-gray-700 hidden lg:block">
+            <div className={`flex items-center ${
+              (isSidebarHovered && !isMobile) ? 'justify-start' : 'justify-center'
             }`}>
               <LanguageSwitcher />
             </div>
