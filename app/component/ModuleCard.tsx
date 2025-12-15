@@ -2,6 +2,7 @@
 
 import { useState, createContext, useContext } from 'react';
 import { ChevronLeft, ChevronRight, X, Menu } from 'lucide-react';
+import Sidebar from './Sidebar'; // Add this import
 
 // Create a simple language context
 const LanguageContext = createContext<{ language: 'en' | 'ar' }>({ language: 'en' });
@@ -408,7 +409,7 @@ function ReadingModal({
   const [currentView, setCurrentView] = useState<'landing' | 'list' | 'content'>('landing');
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const [currentSection, setCurrentSection] = useState<'reading' | 'video' | 'self-assessment'>('reading');
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [activePage, setActivePage] = useState<string>('home'); // Added for sidebar
 
   const content = moduleContent[moduleNumber as keyof typeof moduleContent]?.[language];
   const currentLesson = content?.lessons.find(l => l.id === selectedLesson);
@@ -502,85 +503,20 @@ function ReadingModal({
     );
   }
 
-  // Content view with sidebar and navigation
+  // Content view - WITH SIDEBAR
   const currentLessonIndex = content.lessons.findIndex(l => l.id === selectedLesson);
   const totalLessons = content.lessons.length;
 
   return (
-    <div className="fixed inset-0 bg-white z-[100] flex flex-col lg:flex-row">
-      {/* Mobile Menu Button */}
-      <button 
-        onClick={() => setShowSidebar(!showSidebar)} 
-        className="lg:hidden fixed top-4 left-4 z-30 bg-gray-900 text-white p-2 rounded-lg shadow-lg"
-      >
-        <Menu className="w-6 h-6" />
-      </button>
+    <div className="fixed inset-0 z-[100] flex">
+      {/* Add Sidebar here */}
+      <Sidebar 
+        activePage={activePage} 
+        onPageChange={setActivePage} 
+      />
 
-      {/* Sidebar */}
-      <div className={`${showSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto h-full transition-transform duration-300 z-20`}>
-        {/* Mobile close button */}
-        <button 
-          onClick={() => setShowSidebar(false)} 
-          className="lg:hidden absolute top-4 right-4 text-white"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        {/* Module Header with Background Image */}
-        <div className="h-48 bg-gradient-to-br from-gray-700 to-gray-900 relative flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-          <h2 className="relative text-lg font-bold text-center leading-tight z-10">
-            {content.title}
-          </h2>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="p-4 border-b border-gray-700">
-          <div className="text-sm text-gray-400 mb-2">0% COMPLETE</div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
-            <div className="bg-blue-500 h-2 rounded-full transition-all" style={{ width: "0%" }}></div>
-          </div>
-        </div>
-
-        {/* Lesson Navigation */}
-        <div className="p-4">
-          <nav className="space-y-2">
-            {content.lessons.map((lesson) => (
-              <div
-                key={lesson.id}
-                onClick={() => {
-                  setSelectedLesson(lesson.id);
-                  setShowSidebar(false);
-                }}
-                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-                  selectedLesson === lesson.id
-                    ? 'bg-gray-700 text-white'
-                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                }`}
-              >
-                <span className="text-xs">☰</span>
-                <span className="flex-1 text-sm">{lesson.title}</span>
-                <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 ${
-                  selectedLesson === lesson.id
-                    ? 'border-blue-500'
-                    : 'border-gray-600'
-                }`}></div>
-              </div>
-            ))}
-          </nav>
-        </div>
-      </div>
-
-      {/* Overlay for mobile */}
-      {showSidebar && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-10" 
-          onClick={() => setShowSidebar(false)} 
-        />
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto relative flex flex-col">
+      {/* Main content area */}
+      <div className="flex-1 bg-white overflow-y-auto pt-20 lg:pt-4">
         {/* Top Navigation Bar */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <button
@@ -627,7 +563,7 @@ function ReadingModal({
         </div>
 
         {/* Content */}
-        <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
+        <div className="max-w-4xl mx-auto px-8 py-12">
           {currentSection === 'reading' && (
             <>
               {/* Lesson Counter */}
@@ -680,7 +616,7 @@ function VideoModal({
   const { language } = useLanguage();
   const [currentVideoIndex, setCurrentVideoIndex] = useState<number>(0);
   const [currentSection, setCurrentSection] = useState<'video' | 'reading' | 'self-assessment'>('video');
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [activePage, setActivePage] = useState<string>('home'); // Added for sidebar
 
   const content = moduleVideos[moduleNumber as keyof typeof moduleVideos]?.[language];
   const currentVideo = content?.videos[currentVideoIndex];
@@ -705,84 +641,15 @@ function VideoModal({
   if (!content) return null;
 
   return (
-    <div className="fixed inset-0 bg-white z-[100] flex flex-col lg:flex-row">
-      {/* Mobile Menu Button */}
-      <button 
-        onClick={() => setShowSidebar(!showSidebar)} 
-        className="lg:hidden fixed top-4 left-4 z-30 bg-gray-900 text-white p-2 rounded-lg shadow-lg"
-      >
-        <Menu className="w-6 h-6" />
-      </button>
+    <div className="fixed inset-0 z-[100] flex">
+      {/* Add Sidebar here */}
+      <Sidebar 
+        activePage={activePage} 
+        onPageChange={setActivePage} 
+      />
 
-      {/* Sidebar with video thumbnails */}
-      <div className={`${showSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative w-80 bg-gray-900 text-white flex-shrink-0 overflow-y-auto h-full transition-transform duration-300 z-20`}>
-        {/* Mobile close button */}
-        <button 
-          onClick={() => setShowSidebar(false)} 
-          className="lg:hidden absolute top-4 right-4 text-white"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        {/* Module Header */}
-        <div className="h-48 bg-gradient-to-br from-gray-700 to-gray-900 relative flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-          <h2 className="relative text-lg font-bold text-center leading-tight z-10">
-            {content.title}
-          </h2>
-        </div>
-
-        {/* Video List */}
-        <div className="p-4">
-          <h3 className="text-sm text-gray-400 mb-3 uppercase">Videos</h3>
-          <div className="space-y-3">
-            {content.videos.map((video, index) => (
-              <div
-                key={video.id}
-                onClick={() => {
-                  setCurrentVideoIndex(index);
-                  setShowSidebar(false);
-                }}
-                className={`cursor-pointer rounded-lg overflow-hidden transition-all ${
-                  currentVideoIndex === index
-                    ? 'ring-2 ring-blue-500'
-                    : 'hover:opacity-80'
-                }`}
-              >
-                <div className="relative h-32 bg-gray-800">
-                  <img 
-                    src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
-                    alt={video.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                    <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3">
-                  <h4 className="text-sm font-semibold mb-1">{video.title}</h4>
-                  <p className="text-xs text-gray-400">{video.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Overlay for mobile */}
-      {showSidebar && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-10" 
-          onClick={() => setShowSidebar(false)} 
-        />
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto relative flex flex-col">
+      {/* Main content area */}
+      <div className="flex-1 bg-white overflow-y-auto pt-20 lg:pt-4">
         {/* Top Navigation Bar */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <button
@@ -820,8 +687,42 @@ function VideoModal({
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
+        {/* Video Thumbnails */}
+        <div className="max-w-4xl mx-auto px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {content.videos.map((video, index) => (
+              <div
+                key={video.id}
+                onClick={() => setCurrentVideoIndex(index)}
+                className={`cursor-pointer rounded-lg overflow-hidden transition-all ${
+                  currentVideoIndex === index
+                    ? 'ring-2 ring-blue-500'
+                    : 'hover:opacity-80'
+                }`}
+              >
+                <div className="relative h-32 bg-gray-800">
+                  <img 
+                    src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <h4 className="text-sm font-semibold mb-1">{video.title}</h4>
+                  <p className="text-xs text-gray-400">{video.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Selected Video Content */}
           {currentSection === 'video' && currentVideo && (
             <>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -876,6 +777,7 @@ function SelfAssessmentModal({
 }) {
   const { language } = useLanguage();
   const [currentSection, setCurrentSection] = useState<'video' | 'reading' | 'self-assessment'>('self-assessment');
+  const [activePage, setActivePage] = useState<string>('home'); // Added for sidebar
 
   // Navigation functions
   const handleNext = () => {
@@ -895,9 +797,15 @@ function SelfAssessmentModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-white z-[100] flex flex-col lg:flex-row">
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto relative flex flex-col">
+    <div className="fixed inset-0 z-[100] flex">
+      {/* Add Sidebar here */}
+      <Sidebar 
+        activePage={activePage} 
+        onPageChange={setActivePage} 
+      />
+
+      {/* Main content area */}
+      <div className="flex-1 bg-white overflow-y-auto pt-20 lg:pt-4">
         {/* Top Navigation Bar */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <button
@@ -936,7 +844,7 @@ function SelfAssessmentModal({
         </div>
 
         {/* Content */}
-        <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
+        <div className="max-w-4xl mx-auto px-8 py-12">
           <div className="text-center text-gray-600">
             <h2 className="text-4xl font-bold mb-4">Self-Assessment</h2>
             <p>Self-assessment content will be displayed here</p>
@@ -956,24 +864,34 @@ function ActivityModal({
   onClose: () => void;
 }) {
   const { language } = useLanguage();
+  const [activePage, setActivePage] = useState<string>('home'); // Added for sidebar
 
   return (
-    <div className="fixed inset-0 bg-white z-[100] flex flex-col">
-      {/* Top Navigation Bar */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-        <button
-          onClick={onClose}
-          className="text-gray-600 hover:text-gray-900"
-        >
-          <X className="w-6 h-6" />
-        </button>
-      </div>
+    <div className="fixed inset-0 z-[100] flex">
+      {/* Add Sidebar here */}
+      <Sidebar 
+        activePage={activePage} 
+        onPageChange={setActivePage} 
+      />
 
-      {/* Content */}
-      <div className="flex-1 max-w-4xl mx-auto px-8 py-12 w-full">
-        <div className="text-center text-gray-600">
-          <h2 className="text-4xl font-bold mb-4">Activity</h2>
-          <p>Activity content for Module {moduleNumber} will be displayed here</p>
+      {/* Main content area */}
+      <div className="flex-1 bg-white overflow-y-auto pt-20 lg:pt-4">
+        {/* Top Navigation Bar */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="max-w-4xl mx-auto px-8 py-12">
+          <div className="text-center text-gray-600">
+            <h2 className="text-4xl font-bold mb-4">Activity</h2>
+            <p>Activity content for Module {moduleNumber} will be displayed here</p>
+          </div>
         </div>
       </div>
     </div>
